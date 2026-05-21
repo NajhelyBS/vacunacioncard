@@ -20,7 +20,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Vacuna {
-     private String id;
+    private String id;
     private String nombre;
     private Laboratorio laboratorio;
     private int dosisRequeridas;
