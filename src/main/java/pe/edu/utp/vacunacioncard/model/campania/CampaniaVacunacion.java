@@ -20,26 +20,22 @@ import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
 @Setter
 @NoArgsConstructor
 public class CampaniaVacunacion {
-    private String id;
+    private final String id = UUID.randomUUID().toString();
     private String nombre;
     private String descripcion;
     private Vacuna vacuna;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-    private List<String> gruposObjetivo;
+    private List<String> gruposObjetivo = new ArrayList<>();
     private int metaVacunacion;
-    private int vacunadosActuales;
-    private String estado;
+    private int vacunadosActuales = 0;
+    private String estado = "PLANEADA";
 
     public CampaniaVacunacion(String nombre, Vacuna vacuna, LocalDate fechaInicio, LocalDate fechaFin) {
-        this.id = UUID.randomUUID().toString();
         this.nombre = nombre;
         this.vacuna = vacuna;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
-        this.gruposObjetivo = new ArrayList<>();
-        this.estado = "PLANEADA";
-        this.vacunadosActuales = 0;
     }
 
 }

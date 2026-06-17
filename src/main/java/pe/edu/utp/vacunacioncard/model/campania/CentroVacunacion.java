@@ -17,20 +17,18 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 public class CentroVacunacion {
-    private String id;
+    private final String id = UUID.randomUUID().toString();
     private String nombre;
     private Direccion direccion;
     private Contacto contacto;
     private int capacidadDiaria;
     private int personalDisponible;
     private String horarioAtencion;
-    private boolean activo;
+    private boolean activo =  true;
 
     public CentroVacunacion(String nombre, Direccion direccion, int capacidadDiaria) {
-        this.id = UUID.randomUUID().toString();
         this.nombre = nombre;
         this.direccion = direccion;
         this.capacidadDiaria = capacidadDiaria;
-        this.activo = true;
     }
 }

@@ -21,20 +21,18 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class SesionUsuario {
-    private String id;
+    private final String id = UUID.randomUUID().toString();
     private CuentaUsuario cuenta;
     private String token;
-    private LocalDateTime inicioSesion;
+    private final LocalDateTime inicioSesion =  LocalDateTime.now(ZoneId.of("America/Lima"));
     private LocalDateTime expiracion;
     private String ipAddress;
     private String userAgent;
     private boolean activa;
 
     public SesionUsuario(CuentaUsuario cuenta, String ipAddress, String userAgent) {
-        this.id = UUID.randomUUID().toString();
         this.cuenta = cuenta;
         this.token = generarToken();
-        this.inicioSesion = LocalDateTime.now(ZoneId.of("America/Lima"));
         this.expiracion = this.inicioSesion.plusHours(8);
         this.ipAddress = ipAddress;
         this.userAgent = userAgent;

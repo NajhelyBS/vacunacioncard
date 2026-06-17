@@ -20,20 +20,18 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Horario {
-     private String id;
+    private final String id = UUID.randomUUID().toString();
     private String diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;
     private int capacidadPorIntervalo;
-    private List<String> intervalosDisponibles;
+    private List<String> intervalosDisponibles = new ArrayList<>();
 
     public Horario(String diaSemana, LocalTime horaInicio, LocalTime horaFin, int capacidadPorIntervalo) {
-        this.id = UUID.randomUUID().toString();
         this.diaSemana = diaSemana;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
         this.capacidadPorIntervalo = capacidadPorIntervalo;
-        this.intervalosDisponibles = new ArrayList<>();
     }
 
 }

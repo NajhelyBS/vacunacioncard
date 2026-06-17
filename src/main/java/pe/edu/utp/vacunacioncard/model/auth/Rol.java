@@ -21,13 +21,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Rol {
-    private String id;
+    private final String id = UUID.randomUUID().toString();
     private String nombre;
     private String descripcion;
     private List<Permiso> permisos;
 
     public Rol(String nombre, String descripcion) {
-        this.id = UUID.randomUUID().toString();
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.permisos = new ArrayList<>();

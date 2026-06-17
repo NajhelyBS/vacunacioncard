@@ -17,11 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Calendario {
-    private Map<LocalDate, Boolean> diasHabiles;
-    private Map<LocalDate, String> feriados;
+    private Map<LocalDate, Boolean> diasHabiles = new HashMap<>();
+    private Map<LocalDate, String> feriados = new HashMap<>();
 
-    public Calendario() {
-        this.diasHabiles = new HashMap<>();
-        this.feriados = new HashMap<>();
-    }
 }

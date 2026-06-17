@@ -18,13 +18,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Permiso {
-    private String id;
+    private final String id = UUID.randomUUID().toString();
     private String codigo;
     private String nombre;
     private String descripcion;
 
     public Permiso(String codigo, String nombre, String descripcion) {
-        this.id = UUID.randomUUID().toString();
         this.codigo = codigo;
         this.nombre = nombre;
         this.descripcion = descripcion;

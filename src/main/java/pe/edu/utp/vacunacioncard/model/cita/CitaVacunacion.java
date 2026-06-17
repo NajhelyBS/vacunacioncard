@@ -19,21 +19,23 @@ import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
 @Setter
 @NoArgsConstructor
 public class CitaVacunacion {
-    private String id;
+    private final String id = UUID.randomUUID().toString();
     private Paciente paciente;
     private Vacuna vacuna;
     private LocalDateTime fechaHora;
     private String centroVacunacion;
     private String ubicacion;
-    private String estado;
+    private String estado = "PROGRAMADA";
     private String observaciones;
 
     public CitaVacunacion(Paciente paciente, Vacuna vacuna, LocalDateTime fechaHora, String centroVacunacion) {
-        this.id = UUID.randomUUID().toString();
+        if (paciente == null || vacuna == null || fechaHora == null) {
+            throw new IllegalArgumentException("Los datos de la cita no pueden ser nulos");
+        }
+        
         this.paciente = paciente;
         this.vacuna = vacuna;
         this.fechaHora = fechaHora;
         this.centroVacunacion = centroVacunacion;
-        this.estado = "Programada";
     }
 }
