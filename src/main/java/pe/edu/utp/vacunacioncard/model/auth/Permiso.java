@@ -1,5 +1,7 @@
 package pe.edu.utp.vacunacioncard.model.auth;
 
+import java.util.UUID;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +24,7 @@ public class Permiso {
     private String descripcion;
 
     public Permiso(String codigo, String nombre, String descripcion) {
-        this.id = java.util.UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
         this.codigo = codigo;
         this.nombre = nombre;
         this.descripcion = descripcion;

@@ -2,6 +2,7 @@ package pe.edu.utp.vacunacioncard.model.auth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class Rol {
     private List<Permiso> permisos;
 
     public Rol(String nombre, String descripcion) {
-        this.id = java.util.UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.permisos = new ArrayList<>();

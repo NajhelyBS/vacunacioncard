@@ -3,7 +3,7 @@ package pe.edu.utp.vacunacioncard.model.campania;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,7 +32,7 @@ public class CampaniaVacunacion {
     private String estado;
 
     public CampaniaVacunacion(String nombre, Vacuna vacuna, LocalDate fechaInicio, LocalDate fechaFin) {
-        this.id = java.util.UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
         this.nombre = nombre;
         this.vacuna = vacuna;
         this.fechaInicio = fechaInicio;

@@ -1,6 +1,8 @@
 package pe.edu.utp.vacunacioncard.model.auth;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId; 
+import java.util.UUID;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,10 +31,10 @@ public class SesionUsuario {
     private boolean activa;
 
     public SesionUsuario(CuentaUsuario cuenta, String ipAddress, String userAgent) {
-        this.id = java.util.UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
         this.cuenta = cuenta;
         this.token = generarToken();
-        this.inicioSesion = LocalDateTime.now();
+        this.inicioSesion = LocalDateTime.now(ZoneId.of("America/Lima"));
         this.expiracion = this.inicioSesion.plusHours(8);
         this.ipAddress = ipAddress;
         this.userAgent = userAgent;
@@ -40,6 +42,6 @@ public class SesionUsuario {
     }
 
     private String generarToken() {
-        return java.util.UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
+        return UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
     }
 }

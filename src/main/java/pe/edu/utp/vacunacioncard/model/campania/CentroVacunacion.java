@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.edu.utp.vacunacioncard.model.comun.Contacto;
 import pe.edu.utp.vacunacioncard.model.comun.Direccion;
-
+import java.util.UUID;
 /**
  * Clase CentroVacunacion que representa un centro donde se aplican vacunas.
  *
@@ -27,7 +27,7 @@ public class CentroVacunacion {
     private boolean activo;
 
     public CentroVacunacion(String nombre, Direccion direccion, int capacidadDiaria) {
-        this.id = java.util.UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
         this.nombre = nombre;
         this.direccion = direccion;
         this.capacidadDiaria = capacidadDiaria;
