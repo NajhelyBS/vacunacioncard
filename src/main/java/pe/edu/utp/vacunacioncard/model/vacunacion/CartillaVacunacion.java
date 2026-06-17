@@ -2,7 +2,7 @@ package pe.edu.utp.vacunacioncard.model.vacunacion;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,20 +20,18 @@ import pe.edu.utp.vacunacioncard.model.usuario.Paciente;
 @Setter
 @NoArgsConstructor
 public class CartillaVacunacion {
-    private String id;
+    private final String id = UUID.randomUUID().toString();
     private Paciente paciente;
     private String codigoQR;
-    private List<RegistroVacuna> registrosVacunacion;
-    private List<EsquemaVacunacion> esquemasAsignados;
-    private boolean activa;
-    private String estado;
+    private List<RegistroVacuna> registrosVacunacion = new ArrayList<>();
+    private List<EsquemaVacunacion> esquemasAsignados = new ArrayList<>();
+    private boolean activa = true;
+    private String estado = "ACTIVA";
 
     public CartillaVacunacion(Paciente paciente) {
-        this.id = java.util.UUID.randomUUID().toString();
+        if (paciente == null) {
+            throw new IllegalArgumentException("El paciente es obligatorio para crear una cartilla de vacunación");
+        }
         this.paciente = paciente;
-        this.registrosVacunacion = new ArrayList<>();
-        this.esquemasAsignados = new ArrayList<>();
-        this.activa = true;
-        this.estado = "ACTIVA";
     }
 }

@@ -21,6 +21,9 @@ public class UbicacionAplicacion {
     private String distrito;
 
     public UbicacionAplicacion(String nombreLugar, String direccion, String distrito) {
+        if (nombreLugar == null || nombreLugar.isBlank()) {
+            throw new IllegalArgumentException("El nombre del lugar es obligatorio y no puede ser nulo o vacío");
+        }
         this.nombreLugar = nombreLugar;
         this.direccion = direccion;
         this.distrito = distrito;

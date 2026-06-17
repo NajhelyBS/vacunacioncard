@@ -3,7 +3,7 @@ package pe.edu.utp.vacunacioncard.model.salud;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
+import java.util.UUID;
 /**
  * Clase alergia que representa una alergia del paciente.
  *
@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Alergia {
-    private String id;
+    private final String id = UUID.randomUUID().toString();
     private String nombre;
     private String tipo;
     private String severidad;
@@ -23,7 +23,9 @@ public class Alergia {
     private String tratamientoRecomendado;
 
     public Alergia(String nombre, String tipo, String severidad) {
-        this.id = java.util.UUID.randomUUID().toString();
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre de la alergia no puede ser nulo o vacío");
+        }
         this.nombre = nombre;
         this.tipo = tipo;
         this.severidad = severidad;

@@ -1,7 +1,8 @@
 package pe.edu.utp.vacunacioncard.model.vacunacion;
 
 import java.time.LocalDateTime;
-
+import java.time.ZoneId;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,25 +20,26 @@ import pe.edu.utp.vacunacioncard.model.usuario.Paciente;
 @Setter
 @NoArgsConstructor
 public class AplicacionDosis {
-    private String id;
+    private final String id  = UUID.randomUUID().toString();
     private Paciente paciente;
     private Vacuna vacuna;
     private int dosisNumero;
-    private LocalDateTime fechaHora;
+    private final LocalDateTime fechaHora = LocalDateTime.now(ZoneId.of("America/Lima"));
     private Enfermero enfermero;
     private String loteVacuna;
     private String sitioInyeccion;
-    private boolean exito;
+    private boolean exito = true;
     private String observaciones;
 
     public AplicacionDosis(Paciente paciente, Vacuna vacuna, int dosisNumero, Enfermero enfermero, String loteVacuna) {
-        this.id = java.util.UUID.randomUUID().toString();
+    
+        if (paciente == null || vacuna == null || enfermero == null) {
+            throw new IllegalArgumentException("Datos obligatorios (Paciente, Vacuna, Enfermero) no pueden ser nulos o vacíos");
+        }
         this.paciente = paciente;
         this.vacuna = vacuna;
         this.dosisNumero = dosisNumero;
         this.enfermero = enfermero;
         this.loteVacuna = loteVacuna;
-        this.fechaHora = LocalDateTime.now();
-        this.exito = true;
     }
 }

@@ -1,5 +1,6 @@
 package pe.edu.utp.vacunacioncard.model.notificacion;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,13 +16,13 @@ import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class NotificacionSistema extends Notificacion{
     private String tipo;
-    private boolean leida;
+    private boolean leida = false;
 
     public NotificacionSistema(Usuario destinatario, String mensaje, String tipo) {
         super(destinatario, mensaje);
         this.tipo = tipo;
-        this.leida = false;
     }
 }

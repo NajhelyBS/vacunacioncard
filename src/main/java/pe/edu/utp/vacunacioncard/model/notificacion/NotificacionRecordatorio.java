@@ -1,7 +1,6 @@
 package pe.edu.utp.vacunacioncard.model.notificacion;
 
 import java.time.LocalDateTime;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,8 +22,15 @@ public class NotificacionRecordatorio extends Notificacion {
     private LocalDateTime fechaRecordatorio;
 
     public NotificacionRecordatorio(Usuario destinatario, RegistroVacuna registroVacuna, LocalDateTime fechaRecordatorio) {
-        super(destinatario, "Recordatorio de próxima dosis");
+        super(destinatario, validarMensaje(registroVacuna, fechaRecordatorio));
         this.registroVacuna = registroVacuna;
         this.fechaRecordatorio = fechaRecordatorio;
+    }
+
+    private static String validarMensaje(RegistroVacuna rv, LocalDateTime fr) {
+    if (rv == null || fr == null) {
+        throw new IllegalArgumentException("Registro de vacuna y fecha no pueden ser nulos");
+    }
+        return "Recordatorio de próxima dosis";
     }
 }

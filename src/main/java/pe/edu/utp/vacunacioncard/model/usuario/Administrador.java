@@ -1,7 +1,6 @@
 package pe.edu.utp.vacunacioncard.model.usuario;
 
 import java.time.LocalDate;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,12 +17,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Administrador extends Usuario{
-    private String nivelAcceso;
+    private String nivelAcceso = "TOTAL";
     private String area;
 
     
     public Administrador(String nombreCompleto, String dni, LocalDate fechaNacimiento) {
         super(nombreCompleto, dni, fechaNacimiento);
-        this.nivelAcceso = "TOTAL";
     }
 }

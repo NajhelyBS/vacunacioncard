@@ -28,16 +28,13 @@ import pe.edu.utp.vacunacioncard.model.salud.Contraindicacion;
 public class Paciente extends Usuario{
     private String historiaClinicaId;
     private String grupoSanguineo;
-    private List<Alergia> alergias;
-    private List<CondicionMedica> condicionesMedicas;
-    private List<Contraindicacion> contraindicaciones;
+    private List<Alergia> alergias = new ArrayList<>();
+    private List<CondicionMedica> condicionesMedicas = new ArrayList<>();
+    private List<Contraindicacion> contraindicaciones = new ArrayList<>();
     private SeguroMedico seguroMedico;
     private String contactoEmergencia;
 
     public Paciente(String nombreCompleto, String dni, LocalDate fechaNacimiento) {
         super(nombreCompleto, dni, fechaNacimiento);
-        this.alergias = new ArrayList<>();
-        this.condicionesMedicas = new ArrayList<>();
-        this.contraindicaciones = new ArrayList<>();
     }
 }

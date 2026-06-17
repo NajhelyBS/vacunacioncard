@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
+import java.util.UUID;
 
 /**
  * Clase Contraindicacion que representa una contraindicación para la aplicación de vacunas.
@@ -16,14 +17,16 @@ import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
 @Setter
 @NoArgsConstructor
 public class Contraindicacion {
-    private String id;
+    private final String id = UUID.randomUUID().toString();
     private String descripcion;
     private String severidad;
     private String condicionAsociada;
     private Vacuna vacunaAfectada;
 
     public Contraindicacion(String descripcion, String severidad) {
-        this.id = java.util.UUID.randomUUID().toString();
+        if (descripcion == null || descripcion.isBlank()) {
+            throw new IllegalArgumentException("La descripción es obligatoria");
+        }
         this.descripcion = descripcion;
         this.severidad = severidad;
     }
