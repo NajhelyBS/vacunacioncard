@@ -1,10 +1,10 @@
 package pe.edu.utp.vacunacioncard.model.cita;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.UUID;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import jakarta.persistence.*;
+import lombok.*;
 import pe.edu.utp.vacunacioncard.model.usuario.Paciente;
 import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
 
@@ -15,27 +15,41 @@ import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
  * @version 1.0
  */
 
+@Builder
+@Entity
+@Table(name = "mae_cita_vacunacion")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-public class CitaVacunacion {
-    private final String id = UUID.randomUUID().toString();
-    private Paciente paciente;
-    private Vacuna vacuna;
-    private LocalDateTime fechaHora;
-    private String centroVacunacion;
-    private String ubicacion;
-    private String estado = "PROGRAMADA";
-    private String observaciones;
+public class CitaVacunacion implements Serializable {
 
-    public CitaVacunacion(Paciente paciente, Vacuna vacuna, LocalDateTime fechaHora, String centroVacunacion) {
-        if (paciente == null || vacuna == null || fechaHora == null) {
-            throw new IllegalArgumentException("Los datos de la cita no pueden ser nulos");
-        }
-        
-        this.paciente = paciente;
-        this.vacuna = vacuna;
-        this.fechaHora = fechaHora;
-        this.centroVacunacion = centroVacunacion;
-    }
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "paciente_id", nullable = false)
+    private Paciente paciente;
+
+    @ManyToOne
+    @JoinColumn(name = "vacuna_id", nullable = false)
+    private Vacuna vacuna;
+
+    @Column(name = "fecha_hora", nullable = false)
+    private LocalDateTime fechaHora;
+
+    @Column(name = "centro_vacunacion")
+    private String centroVacunacion;
+
+    @Column(name = "ubicacion")
+    private String ubicacion;
+
+    @Column(name = "estado")
+    private String estado = "PROGRAMADA";
+
+    @Column(name = "observaciones")
+    private String observaciones;
 }
