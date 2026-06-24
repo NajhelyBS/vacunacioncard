@@ -48,6 +48,7 @@ public class CitaVacunacion implements Serializable {
     private String ubicacion;
 
     @Column(name = "estado")
+    @Builder.Default
     private String estado = "PROGRAMADA";
 
     @Column(name = "observaciones")

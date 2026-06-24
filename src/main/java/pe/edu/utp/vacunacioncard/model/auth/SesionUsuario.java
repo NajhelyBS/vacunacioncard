@@ -1,45 +1,46 @@
 package pe.edu.utp.vacunacioncard.model.auth;
 
+import jakarta.persistence.*;
+import lombok.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.ZoneId; 
-import java.util.UUID;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import java.time.ZoneId;
 /**
- * Clase SesionUsuario que representa una sesión activa de un usuario en el sistema.
- * Controla acceso, autenticación y tiempo de uso.
- *
- * @author Grupo 1
- * @version 1.0
+ * Entidad SesionUsuario que representa la persistencia de sesiones activas.
  */
-
-
+@Builder
+@Entity
+@Table(name = "mae_sesion_usuario")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-public class SesionUsuario {
-    private final String id = UUID.randomUUID().toString();
+public class SesionUsuario implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "cuenta_id")
     private CuentaUsuario cuenta;
+
+    @Column(name = "token", nullable = false)
     private String token;
-    private final LocalDateTime inicioSesion =  LocalDateTime.now(ZoneId.of("America/Lima"));
+
+    @Column(name = "inicio_sesion")
+    private final LocalDateTime inicioSesion = LocalDateTime.now(ZoneId.of("America/Lima"));
+
+    @Column(name = "expiracion")
     private LocalDateTime expiracion;
+
+    @Column(name = "ip_address")
     private String ipAddress;
+
+    @Column(name = "user_agent")
     private String userAgent;
+
     private boolean activa;
-
-    public SesionUsuario(CuentaUsuario cuenta, String ipAddress, String userAgent) {
-        this.cuenta = cuenta;
-        this.token = generarToken();
-        this.expiracion = this.inicioSesion.plusHours(8);
-        this.ipAddress = ipAddress;
-        this.userAgent = userAgent;
-        this.activa = true;
-    }
-
-    private String generarToken() {
-        return UUID.randomUUID().toString() + "-" + System.currentTimeMillis();
-    }
 }

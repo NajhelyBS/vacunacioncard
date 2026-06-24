@@ -1,31 +1,34 @@
 package pe.edu.utp.vacunacioncard.model.auth;
 
-import java.util.UUID;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+import java.io.Serializable;
 
 /**
- * Clase Permiso que representa un permiso asignado a un rol.
- * Define acciones permitidas dentro del sistema.
- *
- * @author Grupo 1
- * @version 1.0
+ * Entidad Permiso que define las acciones autorizadas en el sistema.
+ * Es un dato maestro para el control de acceso.
  */
-
+@Builder
+@Entity
+@Table(name = "mae_permiso")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-public class Permiso {
-    private final String id = UUID.randomUUID().toString();
-    private String codigo;
-    private String nombre;
-    private String descripcion;
+public class Permiso implements Serializable {
 
-    public Permiso(String codigo, String nombre, String descripcion) {
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-    }
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "codigo", nullable = false, unique = true)
+    private String codigo;
+
+    @Column(name = "nombre", nullable = false)
+    private String nombre;
+
+    @Column(name = "descripcion")
+    private String descripcion;
 }

@@ -1,34 +1,37 @@
 package pe.edu.utp.vacunacioncard.model.auth;
 
+import jakarta.persistence.*;
+import lombok.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
- * Clase Rol que representa un rol dentro del sistema.
- * Define los permisos y acceso de un usuario.
- *
- * @author Grupo 1
- * @version 1.0
+ * Entidad Rol que representa los perfiles de acceso en el sistema.
  */
-
-
+@Builder
+@Entity
+@Table(name = "mae_rol")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-public class Rol {
-    private final String id = UUID.randomUUID().toString();
-    private String nombre;
-    private String descripcion;
-    private List<Permiso> permisos;
+public class Rol implements Serializable {
 
-    public Rol(String nombre, String descripcion) {
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.permisos = new ArrayList<>();
-    }
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "nombre", nullable = false, unique = true)
+    private String nombre;
+
+    @Column(name = "descripcion")
+    private String descripcion;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "rol_id")
+    @Builder.Default
+    private List<Permiso> permisos = new ArrayList<>();
 }

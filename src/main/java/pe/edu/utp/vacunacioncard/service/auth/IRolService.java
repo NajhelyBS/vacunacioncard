@@ -1,0 +1,10 @@
+package pe.edu.utp.vacunacioncard.service.auth;
+
+
+import pe.edu.utp.vacunacioncard.model.auth.Rol;
+import java.util.List;
+
+public interface IRolService {
+    List<Rol> listarTodo();
+    Rol guardar(Rol rol);
+}

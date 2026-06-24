@@ -1,41 +1,52 @@
 package pe.edu.utp.vacunacioncard.model.auth;
 
-import java.time.LocalDateTime;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.UUID;
 
 /**
- * Clase CuentaUsuario que representa la cuenta de acceso de un usuario en el sistema.
- * Gestiona credenciales, estado y seguridad del usuario.
- *
- * @author Grupo 1
- * @version 1.0
+ * Entidad CuentaUsuario que representa la cuenta de usuario en el sistema de vacunación.
  */
-
+@Builder
+@Entity
+@Table(name = "mae_cuenta_usuario")
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-public class CuentaUsuario {
-    private final String id = UUID.randomUUID().toString();
+public class CuentaUsuario implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String username;
     private String passwordHash;
-    private Usuario usuario;
-    private Rol rol;
-    private boolean cuentaActiva = true;
-    private boolean bloqueada =  false;
-    private final LocalDateTime fechaCreacion = LocalDateTime.now(ZoneId.of("America/Lima"));
-    private LocalDateTime ultimoAcceso;
-    private int intentosFallidos = 0;
 
-    public CuentaUsuario(String username, String passwordHash, Usuario usuario, Rol rol) {
-        this.username = username;
-        this.passwordHash = passwordHash;
-        this.usuario = usuario;
-        this.rol = rol;
-    }
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario; 
+
+    @ManyToOne
+    @JoinColumn(name = "rol_id")
+    private Rol rol; 
+
+    @Builder.Default 
+    private boolean cuentaActiva = true;
+
+    @Builder.Default
+    private boolean bloqueada = false;
+
+    @Builder.Default
+    private final LocalDateTime fechaCreacion = LocalDateTime.now(ZoneId.of("America/Lima"));
+
+    private LocalDateTime ultimoAcceso;
+
+    @Builder.Default
+    private int intentosFallidos = 0;
 }
