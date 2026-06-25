@@ -1,34 +1,47 @@
 package pe.edu.utp.vacunacioncard.model.notificacion;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.UUID;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
 
 /**
- * Clase Notificacion que representa una notificación enviada a un usuario.
+ * Clase Notificacion que representa una notificacion enviada a un usuario.
  * Es la clase base de los diferentes tipos de notificaciones.
  *
  * @author Grupo 1
  * @version 1.0
  */
 
+@Entity
+@Table(name = "mae_notificacion")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class Notificacion {
-   // Atributos comunes heredados por las subclases
-    private final String id = UUID.randomUUID().toString();
-    private String mensaje;
-    private Usuario destinatario;
-    private final LocalDateTime fechaEnvio = LocalDateTime.now(ZoneId.of("America/Lima"));
-    private String estado = "PENDIENTE"; 
+public abstract class Notificacion implements Serializable {
 
-    // Constructor base para inicializar la lógica común
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "mensaje")
+    private String mensaje;
+
+    @ManyToOne
+    @JoinColumn(name = "destinatario_id")
+    private Usuario destinatario;
+
+    @Column(name = "fecha_envio")
+    private LocalDateTime fechaEnvio;
+
+    @Column(name = "estado")
+    private String estado = "PENDIENTE";
+
     protected Notificacion(Usuario destinatario, String mensaje) {
         this.destinatario = destinatario;
         this.mensaje = mensaje;

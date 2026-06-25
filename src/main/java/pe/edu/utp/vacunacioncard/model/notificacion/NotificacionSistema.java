@@ -1,7 +1,6 @@
 package pe.edu.utp.vacunacioncard.model.notificacion;
 
-import java.time.LocalDateTime;
-
+import jakarta.persistence.*;
 import lombok.*;
 import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
 
@@ -12,12 +11,17 @@ import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
  * @version 1.0
  */
 
+@Entity
+@Table(name = "mae_notificacion_sistema")
 @Getter
 @Setter
 @NoArgsConstructor
 public class NotificacionSistema extends Notificacion {
 
+    @Column(name = "tipo")
     private String tipo;
+
+    @Column(name = "leida")
     private boolean leida = false;
 
     public NotificacionSistema(Usuario destinatario, String mensaje, String tipo) {

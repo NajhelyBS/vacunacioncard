@@ -1,42 +1,53 @@
 package pe.edu.utp.vacunacioncard.model.comun;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.UUID;
 
+import jakarta.persistence.*;
 import lombok.*;
 import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
 
 /**
- * Clase RegistroAuditoria que representa el registro de auditoría de acciones en el sistema.
- * No es una entidad persistente: se usa como DTO/evento de log en memoria o enviado
- * a un sistema externo (ej. logging, mensajería).
+ * Clase RegistroAuditoria que representa el registro de auditoria de acciones en el sistema.
  *
  * @author Grupo 1
  * @version 1.0
  */
 
 @Builder
+@Entity
+@Table(name = "mae_registro_auditoria")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class RegistroAuditoria {
+public class RegistroAuditoria implements Serializable {
 
-    private String id = UUID.randomUUID().toString();
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
-    private String accion;
-    private String entidadAfectada;
-    private String idEntidad;
-    private String detalles;
-    private LocalDateTime fechaHora = LocalDateTime.now(ZoneId.of("America/Lima"));
-    private String ipAddress;
 
-    public RegistroAuditoria(Usuario usuario, String accion, String entidadAfectada, String detalles) {
-        if (usuario == null) throw new IllegalArgumentException("Usuario no puede ser nulo");
-        this.usuario = usuario;
-        this.accion = accion;
-        this.entidadAfectada = entidadAfectada;
-        this.detalles = detalles;
-    }
+    @Column(name = "accion", nullable = false)
+    private String accion;
+
+    @Column(name = "entidad_afectada")
+    private String entidadAfectada;
+
+    @Column(name = "id_entidad")
+    private String idEntidad;
+
+    @Column(name = "detalles")
+    private String detalles;
+
+    @Column(name = "fecha_hora")
+    private LocalDateTime fechaHora;
+
+    @Column(name = "ip_address")
+    private String ipAddress;
 }
