@@ -1,4 +1,3 @@
-
 package pe.edu.utp.vacunacioncard.model.notificacion;
 
 import java.io.Serializable;
