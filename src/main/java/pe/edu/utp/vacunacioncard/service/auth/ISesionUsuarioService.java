@@ -27,4 +27,9 @@ public interface ISesionUsuarioService {
      * @param id El identificador único de la sesión a cerrar.
      */
     void cerrarSesion(Long id);
+
+    /**
+     * Verifica si la cuenta del usuario debe ser bloqueada según el número de intentos fallidos.
+     */
+    boolean verificarBloqueoCuenta(int intentosFallidos);
 }
