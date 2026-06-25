@@ -50,6 +50,7 @@ public class Paciente implements Serializable {
     @Embedded
     private Direccion direccion;
 
+    @Builder.Default
     @Column(name = "activo")
     private boolean activo = true;
 
@@ -61,14 +62,17 @@ public class Paciente implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "paciente_id")
+    @Builder.Default
     private List<Alergia> alergias = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "paciente_id")
+    @Builder.Default
     private List<CondicionMedica> condicionesMedicas = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "paciente_id")
+    @Builder.Default
     private List<Contraindicacion> contraindicaciones = new ArrayList<>();
 
     @ManyToOne

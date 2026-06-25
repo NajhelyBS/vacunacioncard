@@ -1,4 +1,4 @@
-package pe.edu.utp.vacunacioncard.service.impl.auth;
+package pe.edu.utp.vacunacioncard.service.auth.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +30,7 @@ public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
     @Override
     @Transactional(readOnly = true)
     public List<CuentaUsuario> listarTodas() {
+        log.info("Ejecutando consulta global de cuentas de usuario");
         return repo.findAll();
     }
 
@@ -41,6 +42,7 @@ public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
     @Override
     @Transactional(readOnly = true)
     public Optional<CuentaUsuario> buscarPorId(Long id) {
+        log.info("Buscando cuenta de usuario con ID: {}", id);
         return repo.findById(id);
     }
 
@@ -52,10 +54,13 @@ public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
     @Override
     @Transactional
     public CuentaUsuario registrar(CuentaUsuario cuenta) {
+        log.info("Iniciando persistencia de la cuenta de usuario para el username: {}", cuenta.getUsername());
         try {
-            return repo.save(cuenta);
+            CuentaUsuario cuentaGuardada = repo.save(cuenta);
+            log.info("Cuenta de usuario registrada exitosamente con ID: {}", cuentaGuardada.getId());
+            return cuentaGuardada;
         } catch (DataAccessException e) {
-            log.error("Error al registrar la cuenta: {}", e.getMessage());
+            log.error("Error crítico al registrar la cuenta del usuario {}: {}", cuenta.getUsername(), e.getMessage());
             return null;
         }
     }
@@ -67,6 +72,12 @@ public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
     @Override
     @Transactional
     public void eliminar(Long id) {
-        repo.deleteById(id);
+        log.info("Iniciando proceso de eliminación para la cuenta con ID: {}", id);
+        try {
+            repo.deleteById(id);
+            log.info("Cuenta con ID: {} eliminada satisfactoriamente del sistema", id);
+        } catch (DataAccessException e) {
+            log.error("Error crítico al intentar eliminar la cuenta con ID {}: {}", id, e.getMessage());
+        }
     }
 }

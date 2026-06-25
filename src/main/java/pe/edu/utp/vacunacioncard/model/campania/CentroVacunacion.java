@@ -8,10 +8,8 @@ import pe.edu.utp.vacunacioncard.model.comun.Contacto;
 import pe.edu.utp.vacunacioncard.model.comun.Direccion;
 
 /**
- * Clase CentroVacunacion que representa un centro donde se aplican vacunas.
+ * Entidad CentroVacunacion que representa un centro de vacunación.
  *
- * @author Grupo 1
- * @version 1.0
  */
 
 @Builder
@@ -47,6 +45,8 @@ public class CentroVacunacion implements Serializable {
     @Column(name = "horario_atencion")
     private String horarioAtencion;
 
+    
     @Column(name = "activo")
+    @Builder.Default
     private boolean activo = true;
 }

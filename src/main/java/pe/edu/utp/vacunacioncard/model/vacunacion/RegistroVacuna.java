@@ -50,6 +50,7 @@ public class RegistroVacuna implements Serializable {
     @Embedded
     private UbicacionAplicacion lugarAplicacion;
 
+    @Builder.Default
     @Column(name = "estado")
     private String estado = "APLICADA";
 

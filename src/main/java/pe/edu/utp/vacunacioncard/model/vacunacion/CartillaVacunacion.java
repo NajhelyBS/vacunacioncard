@@ -40,15 +40,19 @@ public class CartillaVacunacion implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "cartilla_id")
+    @Builder.Default
     private List<RegistroVacuna> registrosVacunacion = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "cartilla_id")
+    @Builder.Default
     private List<EsquemaVacunacion> esquemasAsignados = new ArrayList<>();
 
+    @Builder.Default
     @Column(name = "activa")
     private boolean activa = true;
 
     @Column(name = "estado")
+    @Builder.Default
     private String estado = "ACTIVA";
 }

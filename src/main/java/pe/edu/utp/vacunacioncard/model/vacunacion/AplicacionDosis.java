@@ -55,6 +55,7 @@ public class AplicacionDosis implements Serializable {
     private String sitioInyeccion;
 
     @Column(name = "exito")
+    @Builder.Default
     private boolean exito = true;
 
     @Column(name = "observaciones")

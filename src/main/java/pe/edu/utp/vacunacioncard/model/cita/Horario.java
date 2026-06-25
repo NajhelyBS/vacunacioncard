@@ -9,10 +9,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Clase Horario que representa el horario de atencion para vacunacion.
+ * Entidad Horario que representa el horario de atencion para vacunacion.
  *
- * @author Grupo 1
- * @version 1.0
  */
 
 @Builder
@@ -45,5 +43,6 @@ public class Horario implements Serializable {
     @ElementCollection
     @CollectionTable(name = "mae_horario_intervalos", joinColumns = @JoinColumn(name = "horario_id"))
     @Column(name = "intervalo")
+    @Builder.Default
     private List<String> intervalosDisponibles = new ArrayList<>();
 }

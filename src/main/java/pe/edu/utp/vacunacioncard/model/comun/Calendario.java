@@ -8,10 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Clase Calendario que representa el calendario de días hábiles y feriados.
- *
- * @author Grupo 1
- * @version 1.0
+ * Entidad Calendario que representa un calendario de días hábiles y feriados.
  */
 
 @Getter

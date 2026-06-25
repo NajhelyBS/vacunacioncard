@@ -1,4 +1,4 @@
-package pe.edu.utp.vacunacioncard.service.impl.campania;
+package pe.edu.utp.vacunacioncard.service.campania.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -40,5 +40,6 @@ public class CondicionMedica implements Serializable {
     private String tratamiento;
 
     @Column(name = "activa")
+    @Builder.Default
     private boolean activa = true;
 }

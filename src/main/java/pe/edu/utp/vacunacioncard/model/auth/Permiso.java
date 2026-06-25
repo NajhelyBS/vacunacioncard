@@ -6,7 +6,6 @@ import java.io.Serializable;
 
 /**
  * Entidad Permiso que define las acciones autorizadas en el sistema.
- * Es un dato maestro para el control de acceso.
  */
 @Builder
 @Entity

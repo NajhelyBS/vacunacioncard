@@ -9,10 +9,8 @@ import pe.edu.utp.vacunacioncard.model.usuario.Paciente;
 import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
 
 /**
- * Clase CitaVacunacion que representa una cita programada para la vacunación.
+ * Entidad CitaVacunacion que representa una cita programada para vacunación.
  *
- * @author Grupo 1
- * @version 1.0
  */
 
 @Builder

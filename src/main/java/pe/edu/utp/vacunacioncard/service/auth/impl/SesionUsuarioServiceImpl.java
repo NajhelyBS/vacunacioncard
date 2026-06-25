@@ -1,4 +1,4 @@
-package pe.edu.utp.vacunacioncard.service.impl.auth;
+package pe.edu.utp.vacunacioncard.service.auth.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +13,7 @@ import java.util.Optional;
 
 /**
  * Implementación de los servicios de gestión de sesiones.
+ * Asegura el control de excepciones de persistencia y auditoría con Slf4j.
  */
 @Slf4j
 @Service
@@ -22,17 +23,21 @@ public class SesionUsuarioServiceImpl implements ISesionUsuarioService {
     private final SesionUsuarioRepository repo;
 
     /**
-     * Registra una nueva sesión en el sistema.
+     * Registra una nueva sesión en el sistema con manejo de excepciones.
      * @param sesion El objeto sesión a persistir.
      * @return La sesión guardada o null si falló.
      */
     @Override
     @Transactional
     public SesionUsuario crearSesion(SesionUsuario sesion) {
+        log.info("Registrando nueva sesión para la cuenta ID: {}", 
+                sesion.getCuenta() != null ? sesion.getCuenta().getId() : "N/A");
         try {
-            return repo.save(sesion);
+            SesionUsuario sesionGuardada = repo.save(sesion);
+            log.info("Sesión creada exitosamente con ID: {}", sesionGuardada.getId());
+            return sesionGuardada;
         } catch (DataAccessException e) {
-            log.error("Error al crear sesión: {}", e.getMessage());
+            log.error("Error crítico de persistencia al crear la sesión: {}", e.getMessage());
             return null;
         }
     }
@@ -45,19 +50,26 @@ public class SesionUsuarioServiceImpl implements ISesionUsuarioService {
     @Override
     @Transactional(readOnly = true)
     public Optional<SesionUsuario> obtenerPorToken(String token) {
+        log.info("Buscando sesión por token de acceso");
         return repo.findByToken(token);
     }
 
     /**
-     * Inactiva una sesión por su ID.
+     * Inactiva una sesión por su ID de manera segura bajo bloque try-catch.
      * @param id Identificador de la sesión.
      */
     @Override
     @Transactional
     public void cerrarSesion(Long id) {
-        repo.findById(id).ifPresent(s -> {
-            s.setActiva(false);
-            repo.save(s);
-        });
+        log.info("Solicitud de cierre para la sesión ID: {}", id);
+        try {
+            repo.findById(id).ifPresent(s -> {
+                s.setActiva(false);
+                repo.save(s);
+                log.info("Sesión ID: {} dada de baja correctamente", id);
+            });
+        } catch (DataAccessException e) {
+            log.error("Error crítico al intentar cerrar la sesión ID {}: {}", id, e.getMessage());
+        }
     }
 }

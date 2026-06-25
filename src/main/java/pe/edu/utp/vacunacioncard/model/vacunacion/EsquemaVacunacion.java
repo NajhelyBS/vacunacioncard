@@ -43,11 +43,13 @@ public class EsquemaVacunacion implements Serializable {
         joinColumns = @JoinColumn(name = "esquema_id"),
         inverseJoinColumns = @JoinColumn(name = "vacuna_id")
     )
+    @Builder.Default
     private List<Vacuna> vacunasRequeridas = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "mae_esquema_edades", joinColumns = @JoinColumn(name = "esquema_id"))
     @Column(name = "edad_recomendada")
+    @Builder.Default
     private List<Integer> edadesRecomendadas = new ArrayList<>();
 
     @ManyToOne
@@ -61,5 +63,6 @@ public class EsquemaVacunacion implements Serializable {
     private LocalDate fechaFin;
 
     @Column(name = "estado")
+    @Builder.Default
     private String estado = "PENDIENTE";
 }
