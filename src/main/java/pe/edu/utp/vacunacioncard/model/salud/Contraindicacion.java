@@ -9,8 +9,6 @@ import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
 /**
  * Clase Contraindicacion que representa una contraindicacion para la aplicacion de vacunas.
  *
- * @author Grupo 1
- * @version 1.0
  */
 
 @Builder

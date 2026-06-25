@@ -8,8 +8,6 @@ import lombok.*;
 /**
  * Clase CondicionMedica que representa una condicion medica del paciente.
  *
- * @author Grupo 1
- * @version 1.0
  */
 
 @Builder

@@ -7,9 +7,7 @@ import lombok.*;
 
 /**
  * Clase alergia que representa una alergia del paciente.
- *
- * @author Grupo 1
- * @version 1.0
+ 
  */
 
 @Builder
