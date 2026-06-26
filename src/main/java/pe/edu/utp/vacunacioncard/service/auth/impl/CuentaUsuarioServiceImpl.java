@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.auth.CuentaUsuario;
 import pe.edu.utp.vacunacioncard.repository.auth.CuentaUsuarioRepository;
 import pe.edu.utp.vacunacioncard.service.auth.ICuentaUsuarioService;
@@ -12,10 +13,6 @@ import pe.edu.utp.vacunacioncard.service.auth.ICuentaUsuarioService;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Implementación de los servicios para la gestión de cuentas de usuario.
- * Aplica inyección por constructor mediante RequiredArgsConstructor.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,61 +20,42 @@ public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
 
     private final CuentaUsuarioRepository repo;
 
-    /**
-     * Obtiene la lista de todas las cuentas registradas.
-     * @return Lista de CuentaUsuario.
-     */
     @Override
     @Transactional(readOnly = true)
     public List<CuentaUsuario> listarTodas() {
-        log.info("Ejecutando consulta global de cuentas de usuario");
+        log.info("Listando todas las cuentas de usuario");
         return repo.findAll();
     }
 
-    /**
-     * Busca una cuenta por su identificador único.
-     * @param id El ID de la cuenta.
-     * @return Un Optional con la cuenta si existe.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<CuentaUsuario> buscarPorId(Long id) {
-        log.info("Buscando cuenta de usuario con ID: {}", id);
+        log.info("Buscando cuenta por ID: {}", id);
         return repo.findById(id);
     }
 
-    /**
-     * Registra una nueva cuenta en el sistema con manejo de excepciones.
-     * @param cuenta El objeto cuenta a persistir.
-     * @return La cuenta guardada o null si hubo un error.
-     */
     @Override
     @Transactional
     public CuentaUsuario registrar(CuentaUsuario cuenta) {
-        log.info("Iniciando persistencia de la cuenta de usuario para el username: {}", cuenta.getUsername());
+        log.info("Registrando cuenta para username: {}", cuenta.getUsername());
         try {
-            CuentaUsuario cuentaGuardada = repo.save(cuenta);
-            log.info("Cuenta de usuario registrada exitosamente con ID: {}", cuentaGuardada.getId());
-            return cuentaGuardada;
+            CuentaUsuario guardada = repo.save(cuenta);
+            log.info("Cuenta registrada con ID: {}", guardada.getId());
+            return guardada;
         } catch (DataAccessException e) {
-            log.error("Error crítico al registrar la cuenta del usuario {}: {}", cuenta.getUsername(), e.getMessage());
-            return null;
+            throw new ServiceException("Error al registrar cuenta de usuario: " + cuenta.getUsername(), e);
         }
     }
 
-    /**
-     * Elimina una cuenta del sistema.
-     * @param id El ID de la cuenta a eliminar.
-     */
     @Override
     @Transactional
     public void eliminar(Long id) {
-        log.info("Iniciando proceso de eliminación para la cuenta con ID: {}", id);
+        log.info("Eliminando cuenta con ID: {}", id);
         try {
             repo.deleteById(id);
-            log.info("Cuenta con ID: {} eliminada satisfactoriamente del sistema", id);
+            log.info("Cuenta eliminada con ID: {}", id);
         } catch (DataAccessException e) {
-            log.error("Error crítico al intentar eliminar la cuenta con ID {}: {}", id, e.getMessage());
+            throw new ServiceException("Error al eliminar cuenta con ID: " + id, e);
         }
     }
 }

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.auth.SesionUsuario;
 import pe.edu.utp.vacunacioncard.repository.auth.SesionUsuarioRepository;
 import pe.edu.utp.vacunacioncard.service.auth.ISesionUsuarioService;
@@ -12,10 +13,6 @@ import pe.edu.utp.vacunacioncard.service.patron.singleton.ConfiguracionSistema;
 
 import java.util.Optional;
 
-/**
- * Implementación de los servicios de gestión de sesiones.
- * Asegura el control de excepciones de persistencia y auditoría con Slf4j.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,77 +20,54 @@ public class SesionUsuarioServiceImpl implements ISesionUsuarioService {
 
     private final SesionUsuarioRepository repo;
 
-    /**
-     * Registra una nueva sesión en el sistema con manejo de excepciones.
-     * 
-     * @param sesion El objeto sesión a persistir.
-     * @return La sesión guardada o null si falló.
-     */
     @Override
     @Transactional
     public SesionUsuario crearSesion(SesionUsuario sesion) {
-        log.info("Registrando nueva sesión para la cuenta ID: {}",
+        log.info("Creando sesión para cuenta ID: {}",
                 sesion.getCuenta() != null ? sesion.getCuenta().getId() : "N/A");
         try {
-            SesionUsuario sesionGuardada = repo.save(sesion);
-            log.info("Sesión creada exitosamente con ID: {}", sesionGuardada.getId());
-            return sesionGuardada;
+            SesionUsuario guardada = repo.save(sesion);
+            log.info("Sesión creada con ID: {}", guardada.getId());
+            return guardada;
         } catch (DataAccessException e) {
-            log.error("Error crítico de persistencia al crear la sesión: {}", e.getMessage());
-            return null;
+            throw new ServiceException("Error al crear sesión de usuario", e);
         }
     }
 
-    /**
-     * Busca una sesión activa mediante su token.
-     * 
-     * @param token El token de acceso.
-     * @return Un Optional con la sesión encontrada.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<SesionUsuario> obtenerPorToken(String token) {
-        log.info("Buscando sesión por token de acceso");
+        log.info("Buscando sesión por token");
         return repo.findByToken(token);
     }
 
-    /**
-     * Inactiva una sesión por su ID de manera segura bajo bloque try-catch.
-     * 
-     * @param id Identificador de la sesión.
-     */
     @Override
     @Transactional
     public void cerrarSesion(Long id) {
-        log.info("Solicitud de cierre para la sesión ID: {}", id);
+        log.info("Cerrando sesión ID: {}", id);
         try {
             repo.findById(id).ifPresent(s -> {
                 s.setActiva(false);
                 repo.save(s);
-                log.info("Sesión ID: {} dada de baja correctamente", id);
+                log.info("Sesión cerrada ID: {}", id);
             });
         } catch (DataAccessException e) {
-            log.error("Error crítico al intentar cerrar la sesión ID {}: {}", id, e.getMessage());
+            throw new ServiceException("Error al cerrar sesión ID: " + id, e);
         }
     }
 
-    /***
-     * Uso del patron Singleton
-     * Verifica si la cuenta del usuario debe ser bloqueada según el número de intentos fallidos.
-     * @param intentosFallidos Número de intentos fallidos de inicio de sesión.
-     * @return true si la cuenta debe ser bloqueada, false en caso contrario.
+    /**
+     * Uso del patrón Singleton para obtener el límite de intentos desde la configuración global.
      */
     @Override
     @Transactional
     public boolean verificarBloqueoCuenta(int intentosFallidos) {
-        // Llamamos al Singleton para traer el límite global (que es 3)
         int limiteMaximo = ConfiguracionSistema.getInstancia().getMaxIntentosLogin();
 
         if (intentosFallidos >= limiteMaximo) {
-            log.warn("La cuenta excede el límite de {} intentos permitidos", limiteMaximo);
-            return true; // Cuenta bloqueada
+            log.warn("Cuenta excede el límite de {} intentos permitidos", limiteMaximo);
+            return true;
         }
         return false;
     }
-
 }

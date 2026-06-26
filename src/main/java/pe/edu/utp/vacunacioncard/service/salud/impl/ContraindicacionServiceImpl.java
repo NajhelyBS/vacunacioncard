@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.salud.Contraindicacion;
 import pe.edu.utp.vacunacioncard.repository.salud.ContraindicacionRepository;
 import pe.edu.utp.vacunacioncard.service.salud.IContraindicacionService;
@@ -12,9 +13,6 @@ import pe.edu.utp.vacunacioncard.service.salud.IContraindicacionService;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Implementación de servicios para la administración de restricciones y contraindicaciones de vacunas.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -22,57 +20,49 @@ public class ContraindicacionServiceImpl implements IContraindicacionService {
 
     private final ContraindicacionRepository repo;
 
-    /***
-     * Recupera todas las contraindicaciones registradas en el sistema con control de lectura.
-     * @return Lista de objetos {@link Contraindicacion}.
-     */
     @Override
     @Transactional(readOnly = true)
     public List<Contraindicacion> listarTodas() {
-        log.info("Ejecutando consulta global del catálogo de contraindicaciones médicas");
+        log.info("Listando todas las contraindicaciones");
         return repo.findAll();
     }
 
-    /***
-     * Recupera el registro de una contraindicación específica mediante su identificador único.
-     * @param id El identificador único de la contraindicación.
-     * @return Un {@link Optional} que contiene el registro si es hallado.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<Contraindicacion> obtenerPorId(Long id) {
-        log.info("Buscando registro de contraindicación con ID: {}", id);
+        log.info("Buscando contraindicación por ID: {}", id);
         return repo.findById(id);
     }
 
-    /***
-     * Registra o actualiza una contraindicación médica con control de persistencia y errores.
-     * @param contraindicacion El objeto contraindicación a guardar.
-     * @return La {@link Contraindicacion} guardada con éxito, o null si ocurre un fallo.
-     */
     @Override
     @Transactional
     public Contraindicacion registrar(Contraindicacion contraindicacion) {
-        log.info("Iniciando almacenamiento de contraindicación médica preventiva");
+        log.info("Registrando contraindicación");
         try {
             Contraindicacion guardada = repo.save(contraindicacion);
-            log.info("Contraindicación registrada exitosamente con el ID generado: {}", guardada.getId());
+            log.info("Contraindicación registrada con ID: {}", guardada.getId());
             return guardada;
         } catch (DataAccessException e) {
-            log.error("Error crítico de persistencia al intentar registrar la contraindicación: {}", e.getMessage());
-            return null;
+            throw new ServiceException("Error al registrar contraindicación", e);
         }
     }
 
-    /***
-     * Obtiene el catálogo de restricciones médicas vinculadas a una vacuna en particular.
-     * @param vacunaId Identificador único de la vacuna.
-     * @return Lista de objetos {@link Contraindicacion}.
-     */
     @Override
     @Transactional(readOnly = true)
     public List<Contraindicacion> listarPorVacunaAfectada(Long vacunaId) {
-        log.info("Consultando restricciones médicas específicas aplicadas a la vacuna ID: {}", vacunaId);
+        log.info("Listando contraindicaciones de vacuna ID: {}", vacunaId);
         return repo.findByVacunaAfectadaId(vacunaId);
+    }
+
+    @Override
+    @Transactional
+    public void eliminar(Long id) {
+        log.info("Eliminando contraindicación con ID: {}", id);
+        try {
+            repo.deleteById(id);
+            log.info("Contraindicación eliminada con ID: {}", id);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al eliminar contraindicación con ID: " + id, e);
+        }
     }
 }
