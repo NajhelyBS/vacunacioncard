@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(mvnw compile *)",
-      "PowerShell(.\\\\mvnw.cmd compile -q 2>&1)",
-      "Bash(./mvnw compile *)"
-    ]
-  }
-}
