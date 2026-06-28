@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataRetrievalFailureException;
+import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.notificacion.Notificacion;
 import pe.edu.utp.vacunacioncard.model.notificacion.NotificacionSistema;
 import pe.edu.utp.vacunacioncard.model.usuario.Enfermero;
@@ -88,5 +90,35 @@ class NotificacionServiceImplTest {
         service.registrarRecordatorioVacuna(usuario, registro, fecha);
 
         verify(repo, times(1)).save(any(Notificacion.class));
+    }
+
+    @Test
+    @DisplayName("Enviar notificación lanza ServiceException ante fallo de persistencia")
+    void enviarNotificacion_lanzaServiceException() {
+        Usuario usuario = crearUsuario();
+        NotificacionSistema notif = new NotificacionSistema(usuario, "Test", "SISTEMA");
+        when(repo.save(any(Notificacion.class))).thenThrow(new DataRetrievalFailureException("Error BD"));
+
+        assertThrows(ServiceException.class, () -> service.enviarNotificacion(notif));
+    }
+
+    @Test
+    @DisplayName("Registrar alerta lanza ServiceException ante fallo de persistencia")
+    void registrarNuevaAlerta_lanzaServiceException() {
+        Usuario usuario = crearUsuario();
+        when(repo.save(any(Notificacion.class))).thenThrow(new DataRetrievalFailureException("Error BD"));
+
+        assertThrows(ServiceException.class, () -> service.registrarNuevaAlerta(usuario, "Alerta"));
+    }
+
+    @Test
+    @DisplayName("Registrar recordatorio lanza ServiceException ante fallo de persistencia")
+    void registrarRecordatorioVacuna_lanzaServiceException() {
+        Usuario usuario = crearUsuario();
+        RegistroVacuna registro = new RegistroVacuna();
+        LocalDateTime fecha = LocalDateTime.now(ZoneId.of(ZONE_LIMA));
+        when(repo.save(any(Notificacion.class))).thenThrow(new DataRetrievalFailureException("Error BD"));
+
+        assertThrows(ServiceException.class, () -> service.registrarRecordatorioVacuna(usuario, registro, fecha));
     }
 }

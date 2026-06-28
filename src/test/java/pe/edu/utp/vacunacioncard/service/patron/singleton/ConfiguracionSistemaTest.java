@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.*;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,9 +41,13 @@ class ConfiguracionSistemaTest {
     void settersModifican() {
         config.setMaxIntentosLogin(5);
         config.setNombreSistema("NuevoNombre");
+        config.setDiasValidezCita(45);           
+        config.setNotificacionesActivas(false);   
 
         assertEquals(5, config.getMaxIntentosLogin());
         assertEquals("NuevoNombre", config.getNombreSistema());
+        assertEquals(45, config.getDiasValidezCita());
+        assertFalse(config.isNotificacionesActivas());
     }
 
     @Test
@@ -78,5 +83,23 @@ class ConfiguracionSistemaTest {
 
         // Caso 4: Una cita nula no es vigente
         assertFalse(config.isCitaVigente(null));
+    }
+
+    @Test
+    @DisplayName("readResolve mantiene la misma instancia tras la deserialización")
+    void readResolveMantieneInstancia() throws Exception {
+       
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(config);
+        oos.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        ConfiguracionSistema deserializado = (ConfiguracionSistema) ois.readObject();
+        ois.close();
+
+        assertNotNull(deserializado);
+        assertSame(config, deserializado); 
     }
 }

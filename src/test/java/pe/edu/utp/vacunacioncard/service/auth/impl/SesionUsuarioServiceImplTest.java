@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataRetrievalFailureException;
+import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.auth.SesionUsuario;
 import pe.edu.utp.vacunacioncard.repository.auth.SesionUsuarioRepository;
 import pe.edu.utp.vacunacioncard.service.patron.singleton.ConfiguracionSistema;
@@ -28,8 +30,6 @@ class SesionUsuarioServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        // Inicializa y limpia el Singleton antes de cada test para asegurar que 
-        // las reglas de negocio de bloqueo usen los valores correctos (maxIntentos = 3)
         ConfiguracionSistema.getInstancia().reset();
     }
 
@@ -43,9 +43,28 @@ class SesionUsuarioServiceImplTest {
 
         assertNotNull(resultado);
         assertEquals("abc123", resultado.getToken());
-        
-        // Verifica que interactúe con el repositorio
         verify(repo, times(1)).save(sesion);
+    }
+
+    @Test
+    @DisplayName("Crear sesión evalúa el log cuando la cuenta es nula")
+    void crearSesion_cuentaNula_evaluaLog() {
+        SesionUsuario sesionSinCuenta = SesionUsuario.builder().token("xyz789").cuenta(null).activa(true).build();
+        when(repo.save(sesionSinCuenta)).thenReturn(sesionSinCuenta);
+
+        SesionUsuario resultado = service.crearSesion(sesionSinCuenta);
+
+        assertNotNull(resultado);
+        verify(repo, times(1)).save(sesionSinCuenta); 
+    }
+
+    @Test
+    @DisplayName("Crear sesión lanza ServiceException si falla el repositorio")
+    void crearSesion_lanzaServiceException() {
+        SesionUsuario sesion = SesionUsuario.builder().token("error123").build();
+        when(repo.save(sesion)).thenThrow(new DataRetrievalFailureException("Error de BD simulado"));
+
+        assertThrows(ServiceException.class, () -> service.crearSesion(sesion)); 
     }
 
     @Test
@@ -84,9 +103,18 @@ class SesionUsuarioServiceImplTest {
     }
 
     @Test
+    @DisplayName("Cerrar sesión lanza ServiceException si falla el repositorio")
+    void cerrarSesion_lanzaServiceException() {
+        SesionUsuario sesion = SesionUsuario.builder().id(2L).activa(true).build();
+        when(repo.findById(2L)).thenReturn(Optional.of(sesion));
+        when(repo.save(any(SesionUsuario.class))).thenThrow(new DataRetrievalFailureException("Error de BD simulado"));
+
+        assertThrows(ServiceException.class, () -> service.cerrarSesion(2L)); 
+    }
+
+    @Test
     @DisplayName("Verificar bloqueo retorna true si excede intentos")
     void verificarBloqueo_excede() {
-        
         assertTrue(service.verificarBloqueoCuenta(3));
         assertTrue(service.verificarBloqueoCuenta(10));
     }
