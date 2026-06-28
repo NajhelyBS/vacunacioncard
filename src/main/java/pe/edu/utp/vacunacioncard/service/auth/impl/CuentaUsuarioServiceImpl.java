@@ -13,13 +13,14 @@ import pe.edu.utp.vacunacioncard.service.auth.ICuentaUsuarioService;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
-@Service
-@RequiredArgsConstructor
 /**
  * Implementación del servicio para la gestión de cuentas de usuario.
  * Maneja la lógica de negocio y transacciones para la entidad CuentaUsuario.
  */
+@Slf4j
+@Service
+@RequiredArgsConstructor
+
 public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
 
     private final CuentaUsuarioRepository repo;
