@@ -1,6 +1,5 @@
 package pe.edu.utp.vacunacioncard.service.usuario.impl;
 
-import org.hibernate.service.spi.ServiceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -108,8 +107,7 @@ class PacienteServiceImplTest {
         assertEquals(1, resultado.size());
     }
 
-
-        @Test
+    @Test
     @DisplayName("Registrar lanza ServiceException cuando falla la base de datos")
     void registrarDeberiaLanzarServiceExceptionCuandoFallaBaseDatos() {
         Paciente pacienteError = crearPaciente();
@@ -117,7 +115,11 @@ class PacienteServiceImplTest {
         when(repo.save(pacienteError))
             .thenThrow(new org.springframework.dao.DataRetrievalFailureException("Error simulado de DB"));
 
-        assertThrows(ServiceException.class, () -> service.registrar(pacienteError));
+        assertThrows(
+            pe.edu.utp.vacunacioncard.exception.ServiceException.class, 
+            () -> service.registrar(pacienteError)
+        );
     }
+
 
 }
