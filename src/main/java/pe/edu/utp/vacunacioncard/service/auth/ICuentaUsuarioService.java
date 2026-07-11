@@ -36,11 +36,24 @@ public interface ICuentaUsuarioService {
 
     /**
      * Registra una nueva cuenta de usuario en el sistema.
+     * El campo {@code passwordHash} debe contener la contraseña en texto plano; el servicio
+     * la codifica con BCrypt antes de persistirla y valida que el username no exista previamente.
      *
      * @param cuenta Entidad {@link CuentaUsuario} con los datos a persistir.
      * @return La entidad {@link CuentaUsuario} persistida con su identificador asignado.
      */
     CuentaUsuario create(CuentaUsuario cuenta);
+
+    /**
+     * Autentica a un usuario validando su contraseña contra el hash almacenado.
+     * En caso de fallo incrementa los intentos fallidos y bloquea la cuenta si se supera
+     * el límite configurado; en caso de éxito reinicia el contador y actualiza el último acceso.
+     *
+     * @param username    Nombre de usuario de la cuenta.
+     * @param rawPassword Contraseña en texto plano a verificar.
+     * @return La entidad {@link CuentaUsuario} autenticada.
+     */
+    CuentaUsuario authenticate(String username, String rawPassword);
 
     /**
      * Elimina una cuenta de usuario a partir de su identificador único.
