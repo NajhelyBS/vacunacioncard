@@ -24,7 +24,7 @@ class NotificacionFactoryTest {
     @DisplayName("Crea notificación de tipo SISTEMA")
     void creaTipoSistema() {
         INotificacionFactory factory = new SistemaNotificacionFactory("SISTEMA");
-        Notificacion notif = factory.crearNotificacion(usuario, "Mensaje");
+        Notificacion notif = factory.createNotification(usuario, "Mensaje");
 
         assertInstanceOf(NotificacionSistema.class, notif);
         assertEquals("Mensaje", notif.getMensaje());
@@ -35,7 +35,7 @@ class NotificacionFactoryTest {
     @DisplayName("Crea notificación de tipo ALERTA")
     void creaTipoAlerta() {
         INotificacionFactory factory = new SistemaNotificacionFactory("ALERTA");
-        Notificacion notif = factory.crearNotificacion(usuario, "Alerta");
+        Notificacion notif = factory.createNotification(usuario, "Alerta");
 
         assertInstanceOf(NotificacionSistema.class, notif);
     }
@@ -44,7 +44,7 @@ class NotificacionFactoryTest {
     @DisplayName("Crea notificación de tipo INFORMACION")
     void creaTipoInformacion() {
         INotificacionFactory factory = new SistemaNotificacionFactory("INFORMACION");
-        Notificacion notif = factory.crearNotificacion(usuario, "Info");
+        Notificacion notif = factory.createNotification(usuario, "Info");
 
         assertInstanceOf(NotificacionSistema.class, notif);
     }
@@ -53,7 +53,7 @@ class NotificacionFactoryTest {
     @DisplayName("Acepta tipos en minúsculas")
     void aceptaMinusculas() {
         INotificacionFactory factory = new SistemaNotificacionFactory("sistema");
-        Notificacion notif = factory.crearNotificacion(usuario, "Test");
+        Notificacion notif = factory.createNotification(usuario, "Test");
 
         assertInstanceOf(NotificacionSistema.class, notif);
     }
@@ -63,7 +63,7 @@ class NotificacionFactoryTest {
     void tipoInvalido() {
         INotificacionFactory factory = new SistemaNotificacionFactory("INVALIDO");
         assertThrows(IllegalArgumentException.class,
-                () -> factory.crearNotificacion(usuario, "Msg"));
+                () -> factory.createNotification(usuario, "Msg"));
     }
 
     @Test
@@ -82,7 +82,7 @@ class NotificacionFactoryTest {
         LocalDateTime fecha = LocalDateTime.now(ZoneId.of(ZONE_LIMA)).plusDays(30);
 
         INotificacionFactory factory = new RecordatorioNotificacionFactory(registro, fecha);
-        Notificacion notif = factory.crearNotificacion(usuario, null);
+        Notificacion notif = factory.createNotification(usuario, null);
 
         assertInstanceOf(NotificacionRecordatorio.class, notif);
         assertEquals("Recordatorio de proxima dosis", notif.getMensaje());
@@ -95,7 +95,7 @@ class NotificacionFactoryTest {
         INotificacionFactory factory = new RecordatorioNotificacionFactory(null, fecha);
         
         assertThrows(IllegalArgumentException.class,
-                () -> factory.crearNotificacion(usuario, null));
+                () -> factory.createNotification(usuario, null));
     }
 
     @Test
@@ -105,6 +105,6 @@ class NotificacionFactoryTest {
         INotificacionFactory factory = new RecordatorioNotificacionFactory(registro, null);
         
         assertThrows(IllegalArgumentException.class,
-                () -> factory.crearNotificacion(usuario, null));
+                () -> factory.createNotification(usuario, null));
     }
 }

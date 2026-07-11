@@ -36,14 +36,14 @@ class SesionUsuarioServiceImplTest {
 
         @Test
     @DisplayName("Crear sesión guarda y retorna correctamente cuando tiene cuenta")
-    void crearSesion_ConCuenta() {
+    void createSession_ConCuenta() {
         pe.edu.utp.vacunacioncard.model.auth.CuentaUsuario cuentaFake = new pe.edu.utp.vacunacioncard.model.auth.CuentaUsuario();
         cuentaFake.setId(99L);
 
         SesionUsuario sesion = SesionUsuario.builder().token("abc123").cuenta(cuentaFake).activa(true).build();
         when(repo.save(sesion)).thenReturn(sesion);
 
-        SesionUsuario resultado = service.crearSesion(sesion);
+        SesionUsuario resultado = service.createSession(sesion);
 
         assertNotNull(resultado);
         assertEquals("abc123", resultado.getToken());
@@ -52,11 +52,11 @@ class SesionUsuarioServiceImplTest {
 
     @Test
     @DisplayName("Crear sesión guarda correctamente cuando la cuenta es nula")
-    void crearSesion_SinCuenta() {
+    void createSession_SinCuenta() {
         SesionUsuario sesionSinCuenta = SesionUsuario.builder().token("xyz789").cuenta(null).activa(true).build();
         when(repo.save(sesionSinCuenta)).thenReturn(sesionSinCuenta);
 
-        SesionUsuario resultado = service.crearSesion(sesionSinCuenta);
+        SesionUsuario resultado = service.createSession(sesionSinCuenta);
 
         assertNotNull(resultado);
         verify(repo, times(1)).save(sesionSinCuenta);
@@ -65,20 +65,20 @@ class SesionUsuarioServiceImplTest {
 
     @Test
     @DisplayName("Crear sesión lanza ServiceException si falla el repositorio")
-    void crearSesion_lanzaServiceException() {
+    void createSession_lanzaServiceException() {
         SesionUsuario sesion = SesionUsuario.builder().token("error123").build();
         when(repo.save(sesion)).thenThrow(new DataRetrievalFailureException("Error de BD simulado"));
 
-        assertThrows(ServiceException.class, () -> service.crearSesion(sesion)); 
+        assertThrows(ServiceException.class, () -> service.createSession(sesion)); 
     }
 
     @Test
     @DisplayName("Obtener por token retorna la sesión si existe")
-    void obtenerPorToken_existe() {
+    void findByToken_existe() {
         SesionUsuario sesion = SesionUsuario.builder().token("token123").build();
         when(repo.findByToken("token123")).thenReturn(Optional.of(sesion));
 
-        Optional<SesionUsuario> resultado = service.obtenerPorToken("token123");
+        Optional<SesionUsuario> resultado = service.findByToken("token123");
 
         assertTrue(resultado.isPresent());
         verify(repo, times(1)).findByToken("token123");
@@ -86,21 +86,21 @@ class SesionUsuarioServiceImplTest {
 
     @Test
     @DisplayName("Obtener por token retorna vacío si no existe")
-    void obtenerPorToken_noExiste() {
+    void findByToken_noExiste() {
         when(repo.findByToken("inexistente")).thenReturn(Optional.empty());
 
-        assertTrue(service.obtenerPorToken("inexistente").isEmpty());
+        assertTrue(service.findByToken("inexistente").isEmpty());
         verify(repo, times(1)).findByToken("inexistente");
     }
 
     @Test
     @DisplayName("Cerrar sesión la desactiva")
-    void cerrarSesion() {
+    void closeSession() {
         SesionUsuario sesion = SesionUsuario.builder().id(1L).activa(true).token("t").build();
         when(repo.findById(1L)).thenReturn(Optional.of(sesion));
         when(repo.save(any(SesionUsuario.class))).thenReturn(sesion); 
 
-        service.cerrarSesion(1L);
+        service.closeSession(1L);
 
         assertFalse(sesion.isActiva());
         verify(repo, times(1)).findById(1L);
@@ -109,25 +109,25 @@ class SesionUsuarioServiceImplTest {
 
     @Test
     @DisplayName("Cerrar sesión lanza ServiceException si falla el repositorio")
-    void cerrarSesion_lanzaServiceException() {
+    void closeSession_lanzaServiceException() {
         SesionUsuario sesion = SesionUsuario.builder().id(2L).activa(true).build();
         when(repo.findById(2L)).thenReturn(Optional.of(sesion));
         when(repo.save(any(SesionUsuario.class))).thenThrow(new DataRetrievalFailureException("Error de BD simulado"));
 
-        assertThrows(ServiceException.class, () -> service.cerrarSesion(2L)); 
+        assertThrows(ServiceException.class, () -> service.closeSession(2L)); 
     }
 
     @Test
     @DisplayName("Verificar bloqueo retorna true si excede intentos")
     void verificarBloqueo_excede() {
-        assertTrue(service.verificarBloqueoCuenta(3));
-        assertTrue(service.verificarBloqueoCuenta(10));
+        assertTrue(service.isAccountLocked(3));
+        assertTrue(service.isAccountLocked(10));
     }
 
     @Test
     @DisplayName("Verificar bloqueo retorna false dentro del límite")
     void verificarBloqueo_dentro() {
-        assertFalse(service.verificarBloqueoCuenta(0));
-        assertFalse(service.verificarBloqueoCuenta(2));
+        assertFalse(service.isAccountLocked(0));
+        assertFalse(service.isAccountLocked(2));
     }
 }

@@ -34,7 +34,7 @@ public class SesionUsuarioServiceImpl implements ISesionUsuarioService {
      */
     @Override
     @Transactional
-    public SesionUsuario crearSesion(SesionUsuario sesion) {
+    public SesionUsuario createSession(SesionUsuario sesion) {
         log.info("Creando sesión para cuenta ID: {}", 
             sesion.getCuenta() != null ? sesion.getCuenta().getId() : "N/A"); 
         try {
@@ -55,7 +55,7 @@ public class SesionUsuarioServiceImpl implements ISesionUsuarioService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<SesionUsuario> obtenerPorToken(String token) {
+    public Optional<SesionUsuario> findByToken(String token) {
         log.info("Buscando sesión por token");
         return repo.findByToken(token);
     }
@@ -68,7 +68,7 @@ public class SesionUsuarioServiceImpl implements ISesionUsuarioService {
      */
     @Override
     @Transactional
-    public void cerrarSesion(Long id) {
+    public void closeSession(Long id) {
         log.info("Cerrando sesión ID: {}", id);
         try {
             repo.findById(id).ifPresent(s -> {
@@ -91,7 +91,7 @@ public class SesionUsuarioServiceImpl implements ISesionUsuarioService {
      */
     @Override
     @Transactional
-    public boolean verificarBloqueoCuenta(int intentosFallidos) {
+    public boolean isAccountLocked(int intentosFallidos) {
         int limiteMaximo = ConfiguracionSistema.getInstancia().getMaxIntentosLogin();
 
         if (intentosFallidos >= limiteMaximo) {

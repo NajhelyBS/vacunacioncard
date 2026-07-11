@@ -31,7 +31,7 @@ public class RolServiceImpl implements IRolService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Rol> listarTodo() {
+    public List<Rol> getAll() {
         log.info("Listando todos los roles");
         return repo.findAll();
     }
@@ -45,7 +45,7 @@ public class RolServiceImpl implements IRolService {
      */
     @Override
     @Transactional
-    public Rol guardar(Rol rol) {
+    public Rol create(Rol rol) {
         log.info("Guardando rol: {}", rol.getNombre());
         try {
             Rol guardado = repo.save(rol);
@@ -64,7 +64,7 @@ public class RolServiceImpl implements IRolService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<Rol> buscarPorNombre(String nombre) {
+    public Optional<Rol> findByName(String nombre) {
         log.info("Buscando rol por nombre: {}", nombre);
         return repo.findByNombre(nombre);
     }
@@ -77,7 +77,7 @@ public class RolServiceImpl implements IRolService {
      */
     @Override
     @Transactional
-    public void eliminar(Long id) {
+    public void deleteById(Long id) {
         log.info("Eliminando rol con ID: {}", id);
         try {
             repo.deleteById(id);

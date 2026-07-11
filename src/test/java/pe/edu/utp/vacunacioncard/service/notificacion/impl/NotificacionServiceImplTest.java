@@ -18,6 +18,7 @@ import pe.edu.utp.vacunacioncard.repository.notificacion.NotificacionRepository;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,7 +32,7 @@ class NotificacionServiceImplTest {
 
     @InjectMocks
     private NotificacionServiceImpl service;
-    
+
     private static final String ZONE_LIMA = "America/Lima";
 
     private Usuario crearUsuario() {
@@ -42,13 +43,13 @@ class NotificacionServiceImplTest {
 
     @Test
     @DisplayName("Enviar notificación establece estado ENVIADA y fecha")
-    void enviarNotificacion() {
+    void sendNotification() {
         Usuario usuario = crearUsuario();
         NotificacionSistema notif = new NotificacionSistema(usuario, "Test", "SISTEMA");
-        
+
         when(repo.save(any(Notificacion.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Notificacion resultado = service.enviarNotificacion(notif);
+        Notificacion resultado = service.sendNotification(notif);
 
         assertNotNull(resultado);
         assertEquals("ENVIADA", resultado.getEstado());
@@ -58,67 +59,102 @@ class NotificacionServiceImplTest {
 
     @Test
     @DisplayName("Listar por usuario delega al repositorio")
-    void listarPorUsuario() {
+    void findByUser() {
         when(repo.findByDestinatarioId(1L)).thenReturn(List.of());
 
-        List<Notificacion> resultado = service.listarPorUsuario(1L);
+        List<Notificacion> resultado = service.findByUser(1L);
 
         assertTrue(resultado.isEmpty());
         verify(repo, times(1)).findByDestinatarioId(1L);
     }
 
     @Test
+    @DisplayName("Listar por usuario y estado delega al repositorio")
+    void findByUserAndStatus() {
+        when(repo.findByDestinatarioIdAndEstadoIgnoreCase(1L, "PENDIENTE")).thenReturn(List.of());
+
+        List<Notificacion> resultado = service.findByUserAndStatus(1L, "PENDIENTE");
+
+        assertTrue(resultado.isEmpty());
+        verify(repo, times(1)).findByDestinatarioIdAndEstadoIgnoreCase(1L, "PENDIENTE");
+    }
+
+    @Test
+    @DisplayName("Marcar como leída cambia el estado a LEIDA y guarda")
+    void markAsRead() {
+        Usuario usuario = crearUsuario();
+        NotificacionSistema notif = new NotificacionSistema(usuario, "Test", "SISTEMA");
+        when(repo.findById(5L)).thenReturn(Optional.of(notif));
+        when(repo.save(any(Notificacion.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Notificacion resultado = service.markAsRead(5L);
+
+        assertEquals("LEIDA", resultado.getEstado());
+        verify(repo, times(1)).findById(5L);
+        verify(repo, times(1)).save(notif);
+    }
+
+    @Test
+    @DisplayName("Marcar como leída lanza ServiceException si la notificación no existe")
+    void markAsRead_noExiste() {
+        when(repo.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ServiceException.class, () -> service.markAsRead(99L));
+        verify(repo, never()).save(any(Notificacion.class));
+    }
+
+    @Test
     @DisplayName("Registrar alerta usa la Factory y guarda")
-    void registrarNuevaAlerta() {
+    void registerAlert() {
         Usuario usuario = crearUsuario();
         when(repo.save(any(Notificacion.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        service.registrarNuevaAlerta(usuario, "Alerta importante");
+        service.registerAlert(usuario, "Alerta importante");
 
         verify(repo, times(1)).save(any(Notificacion.class));
     }
 
     @Test
     @DisplayName("Registrar recordatorio usa la Factory y guarda")
-    void registrarRecordatorio() {
+    void registerVaccineReminder() {
         Usuario usuario = crearUsuario();
         RegistroVacuna registro = new RegistroVacuna();
-        
+
         LocalDateTime fecha = LocalDateTime.now(ZoneId.of(ZONE_LIMA)).plusDays(30);
         when(repo.save(any(Notificacion.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        service.registrarRecordatorioVacuna(usuario, registro, fecha);
+        service.registerVaccineReminder(usuario, registro, fecha);
 
         verify(repo, times(1)).save(any(Notificacion.class));
     }
 
     @Test
     @DisplayName("Enviar notificación lanza ServiceException ante fallo de persistencia")
-    void enviarNotificacion_lanzaServiceException() {
+    void sendNotification_lanzaServiceException() {
         Usuario usuario = crearUsuario();
         NotificacionSistema notif = new NotificacionSistema(usuario, "Test", "SISTEMA");
         when(repo.save(any(Notificacion.class))).thenThrow(new DataRetrievalFailureException("Error BD"));
 
-        assertThrows(ServiceException.class, () -> service.enviarNotificacion(notif));
+        assertThrows(ServiceException.class, () -> service.sendNotification(notif));
     }
 
     @Test
     @DisplayName("Registrar alerta lanza ServiceException ante fallo de persistencia")
-    void registrarNuevaAlerta_lanzaServiceException() {
+    void registerAlert_lanzaServiceException() {
         Usuario usuario = crearUsuario();
         when(repo.save(any(Notificacion.class))).thenThrow(new DataRetrievalFailureException("Error BD"));
 
-        assertThrows(ServiceException.class, () -> service.registrarNuevaAlerta(usuario, "Alerta"));
+        assertThrows(ServiceException.class, () -> service.registerAlert(usuario, "Alerta"));
     }
 
     @Test
     @DisplayName("Registrar recordatorio lanza ServiceException ante fallo de persistencia")
-    void registrarRecordatorioVacuna_lanzaServiceException() {
+    void registerVaccineReminder_lanzaServiceException() {
         Usuario usuario = crearUsuario();
         RegistroVacuna registro = new RegistroVacuna();
         LocalDateTime fecha = LocalDateTime.now(ZoneId.of(ZONE_LIMA));
         when(repo.save(any(Notificacion.class))).thenThrow(new DataRetrievalFailureException("Error BD"));
 
-        assertThrows(ServiceException.class, () -> service.registrarRecordatorioVacuna(usuario, registro, fecha));
+        assertThrows(ServiceException.class, () -> service.registerVaccineReminder(usuario, registro, fecha));
     }
 }
