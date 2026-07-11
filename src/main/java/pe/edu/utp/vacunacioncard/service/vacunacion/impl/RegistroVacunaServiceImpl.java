@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
 import pe.edu.utp.vacunacioncard.repository.vacunacion.RegistroVacunaRepository;
+import pe.edu.utp.vacunacioncard.service.patron.observer.NotificadorVacunacionConcreto;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IRegistroVacunaService;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class RegistroVacunaServiceImpl implements IRegistroVacunaService {
 
     private final RegistroVacunaRepository repo;
+    private final NotificadorVacunacionConcreto notificador;
 
     /** {@inheritDoc} */
     @Override
@@ -44,6 +46,14 @@ public class RegistroVacunaServiceImpl implements IRegistroVacunaService {
         try {
             RegistroVacuna guardado = repo.save(registro);
             log.info("Registro de vacuna guardado con ID: {}", guardado.getId());
+
+            // Patrón Observer: al aplicar la dosis se notifica a cartilla y auditoría,
+            // y si hay una próxima dosis programada, al recordatorio.
+            notificador.dosisAplicada(guardado);
+            if (guardado.getProximaDosis() != null) {
+                notificador.programarProximaDosis(guardado);
+            }
+
             return guardado;
         } catch (DataAccessException e) {
             throw new ServiceException("Error al guardar registro de vacuna", e);
