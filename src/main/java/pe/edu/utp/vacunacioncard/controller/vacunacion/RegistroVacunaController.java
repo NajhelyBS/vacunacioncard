@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.vacunacion.RegistroVacunaResponse;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IRegistroVacunaService;
 
@@ -21,36 +22,36 @@ public class RegistroVacunaController {
 
     @GetMapping
     @Operation(summary = "Lista todos los registros de vacuna", operationId = "getAllRegistrosVacuna")
-    public ResponseEntity<List<RegistroVacuna>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<RegistroVacunaResponse>> getAll() {
+        return ResponseEntity.ok(service.getAll().stream().map(RegistroVacunaResponse::from).toList());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtiene un registro de vacuna por ID", operationId = "getRegistroVacunaById")
-    public ResponseEntity<RegistroVacuna> getById(@PathVariable Long id) {
+    public ResponseEntity<RegistroVacunaResponse> getById(@PathVariable Long id) {
         return service.getById(id)
-                .map(ResponseEntity::ok)
+                .map(r -> ResponseEntity.ok(RegistroVacunaResponse.from(r)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/enfermero/{enfermeroId}")
     @Operation(summary = "Lista registros aplicados por un enfermero", operationId = "getRegistrosByEnfermero")
-    public ResponseEntity<List<RegistroVacuna>> getByEnfermero(@PathVariable Long enfermeroId) {
-        return ResponseEntity.ok(service.findByNurse(enfermeroId));
+    public ResponseEntity<List<RegistroVacunaResponse>> getByEnfermero(@PathVariable Long enfermeroId) {
+        return ResponseEntity.ok(service.findByNurse(enfermeroId).stream().map(RegistroVacunaResponse::from).toList());
     }
 
     @PostMapping
     @Operation(summary = "Registra la aplicación de una nueva dosis", operationId = "createRegistroVacuna")
-    public ResponseEntity<RegistroVacuna> create(@RequestBody RegistroVacuna registro) {
+    public ResponseEntity<RegistroVacunaResponse> create(@RequestBody RegistroVacuna registro) {
         RegistroVacuna creado = service.create(registro);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(RegistroVacunaResponse.from(creado));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza un registro de vacuna existente", operationId = "updateRegistroVacuna")
-    public ResponseEntity<RegistroVacuna> update(@PathVariable Long id, @RequestBody RegistroVacuna registro) {
+    public ResponseEntity<RegistroVacunaResponse> update(@PathVariable Long id, @RequestBody RegistroVacuna registro) {
         registro.setId(id);
-        return ResponseEntity.ok(service.update(registro));
+        return ResponseEntity.ok(RegistroVacunaResponse.from(service.update(registro)));
     }
 
     @DeleteMapping("/{id}")

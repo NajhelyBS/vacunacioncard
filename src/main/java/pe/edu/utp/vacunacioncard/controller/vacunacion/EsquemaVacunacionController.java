@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.vacunacion.EsquemaVacunacionResponse;
 import pe.edu.utp.vacunacioncard.model.vacunacion.EsquemaVacunacion;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IEsquemaVacunacionService;
 
@@ -21,36 +22,36 @@ public class EsquemaVacunacionController {
 
     @GetMapping
     @Operation(summary = "Lista todos los esquemas", operationId = "getAllEsquemas")
-    public ResponseEntity<List<EsquemaVacunacion>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<EsquemaVacunacionResponse>> getAll() {
+        return ResponseEntity.ok(service.getAll().stream().map(EsquemaVacunacionResponse::from).toList());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtiene un esquema por ID", operationId = "getEsquemaById")
-    public ResponseEntity<EsquemaVacunacion> getById(@PathVariable Long id) {
+    public ResponseEntity<EsquemaVacunacionResponse> getById(@PathVariable Long id) {
         return service.getById(id)
-                .map(ResponseEntity::ok)
+                .map(e -> ResponseEntity.ok(EsquemaVacunacionResponse.from(e)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/paciente/{pacienteId}")
     @Operation(summary = "Lista esquemas asignados a un paciente", operationId = "getEsquemasByPaciente")
-    public ResponseEntity<List<EsquemaVacunacion>> getByPaciente(@PathVariable Long pacienteId) {
-        return ResponseEntity.ok(service.findByPatient(pacienteId));
+    public ResponseEntity<List<EsquemaVacunacionResponse>> getByPaciente(@PathVariable Long pacienteId) {
+        return ResponseEntity.ok(service.findByPatient(pacienteId).stream().map(EsquemaVacunacionResponse::from).toList());
     }
 
     @PostMapping
     @Operation(summary = "Asigna un nuevo esquema de vacunación", operationId = "createEsquema")
-    public ResponseEntity<EsquemaVacunacion> create(@RequestBody EsquemaVacunacion esquema) {
+    public ResponseEntity<EsquemaVacunacionResponse> create(@RequestBody EsquemaVacunacion esquema) {
         EsquemaVacunacion creado = service.create(esquema);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(EsquemaVacunacionResponse.from(creado));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza un esquema existente", operationId = "updateEsquema")
-    public ResponseEntity<EsquemaVacunacion> update(@PathVariable Long id, @RequestBody EsquemaVacunacion esquema) {
+    public ResponseEntity<EsquemaVacunacionResponse> update(@PathVariable Long id, @RequestBody EsquemaVacunacion esquema) {
         esquema.setId(id);
-        return ResponseEntity.ok(service.update(esquema));
+        return ResponseEntity.ok(EsquemaVacunacionResponse.from(service.update(esquema)));
     }
 
     @DeleteMapping("/{id}")

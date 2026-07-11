@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.salud.ContraindicacionResponse;
 import pe.edu.utp.vacunacioncard.model.salud.Contraindicacion;
 import pe.edu.utp.vacunacioncard.service.salud.IContraindicacionService;
 
@@ -21,20 +22,20 @@ public class ContraindicacionController {
 
     @GetMapping
     @Operation(summary = "Lista todas las contraindicaciones", operationId = "getAllContraindicaciones")
-    public ResponseEntity<List<Contraindicacion>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<ContraindicacionResponse>> getAll() {
+        return ResponseEntity.ok(service.getAll().stream().map(ContraindicacionResponse::from).toList());
     }
 
     @GetMapping("/vacuna/{vacunaId}")
     @Operation(summary = "Lista contraindicaciones de una vacuna específica", operationId = "getContraindicacionesByVacuna")
-    public ResponseEntity<List<Contraindicacion>> getByVacuna(@PathVariable Long vacunaId) {
-        return ResponseEntity.ok(service.findByAffectedVaccine(vacunaId));
+    public ResponseEntity<List<ContraindicacionResponse>> getByVacuna(@PathVariable Long vacunaId) {
+        return ResponseEntity.ok(service.findByAffectedVaccine(vacunaId).stream().map(ContraindicacionResponse::from).toList());
     }
 
     @PostMapping
     @Operation(summary = "Registra una nueva contraindicación", operationId = "createContraindicacion")
-    public ResponseEntity<Contraindicacion> create(@RequestBody Contraindicacion contraindicacion) {
+    public ResponseEntity<ContraindicacionResponse> create(@RequestBody Contraindicacion contraindicacion) {
         Contraindicacion creada = service.create(contraindicacion);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ContraindicacionResponse.from(creada));
     }
 }

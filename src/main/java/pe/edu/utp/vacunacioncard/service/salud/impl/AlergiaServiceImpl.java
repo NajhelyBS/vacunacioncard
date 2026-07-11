@@ -9,6 +9,7 @@ import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.salud.Alergia;
 import pe.edu.utp.vacunacioncard.repository.salud.AlergiaRepository;
 import pe.edu.utp.vacunacioncard.service.salud.IAlergiaService;
+import pe.edu.utp.vacunacioncard.exception.ServiceExceptionHandler;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,13 +42,10 @@ public class AlergiaServiceImpl implements IAlergiaService {
     @Transactional
     public Alergia create(Alergia alergia) {
         log.info("Registrando alergia: {}", alergia.getNombre());
-        try {
-            Alergia guardada = repo.save(alergia);
-            log.info("Alergia registrada con ID: {}", guardada.getId());
-            return guardada;
-        } catch (DataAccessException e) {
-            throw new ServiceException("Error al registrar alergia: " + alergia.getNombre(), e);
-        }
+        return ServiceExceptionHandler.execute(
+                () -> repo.save(alergia),
+                "Error al registrar alergia: " + alergia.getNombre()
+        );
     }
 
     /** {@inheritDoc} */

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.vacunacion.CartillaVacunacionResponse;
 import pe.edu.utp.vacunacioncard.model.vacunacion.CartillaVacunacion;
 import pe.edu.utp.vacunacioncard.service.vacunacion.ICartillaVacunacionService;
 
@@ -21,46 +22,46 @@ public class CartillaVacunacionController {
 
     @GetMapping
     @Operation(summary = "Lista todas las cartillas", operationId = "getAllCartillas")
-    public ResponseEntity<List<CartillaVacunacion>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<CartillaVacunacionResponse>> getAll() {
+        return ResponseEntity.ok(service.getAll().stream().map(CartillaVacunacionResponse::from).toList());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtiene una cartilla por ID", operationId = "getCartillaById")
-    public ResponseEntity<CartillaVacunacion> getById(@PathVariable Long id) {
+    public ResponseEntity<CartillaVacunacionResponse> getById(@PathVariable Long id) {
         return service.getById(id)
-                .map(ResponseEntity::ok)
+                .map(c -> ResponseEntity.ok(CartillaVacunacionResponse.from(c)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/paciente/{pacienteId}")
     @Operation(summary = "Obtiene la cartilla de un paciente", operationId = "getCartillaByPaciente")
-    public ResponseEntity<CartillaVacunacion> getByPaciente(@PathVariable Long pacienteId) {
+    public ResponseEntity<CartillaVacunacionResponse> getByPaciente(@PathVariable Long pacienteId) {
         return service.findByPatient(pacienteId)
-                .map(ResponseEntity::ok)
+                .map(c -> ResponseEntity.ok(CartillaVacunacionResponse.from(c)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/qr/{codigoQR}")
     @Operation(summary = "Obtiene una cartilla por código QR", operationId = "getCartillaByQr")
-    public ResponseEntity<CartillaVacunacion> getByQr(@PathVariable String codigoQR) {
+    public ResponseEntity<CartillaVacunacionResponse> getByQr(@PathVariable String codigoQR) {
         return service.findByQrCode(codigoQR)
-                .map(ResponseEntity::ok)
+                .map(c -> ResponseEntity.ok(CartillaVacunacionResponse.from(c)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @Operation(summary = "Crea una nueva cartilla de vacunación", operationId = "createCartilla")
-    public ResponseEntity<CartillaVacunacion> create(@RequestBody CartillaVacunacion cartilla) {
+    public ResponseEntity<CartillaVacunacionResponse> create(@RequestBody CartillaVacunacion cartilla) {
         CartillaVacunacion creada = service.create(cartilla);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CartillaVacunacionResponse.from(creada));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza una cartilla existente", operationId = "updateCartilla")
-    public ResponseEntity<CartillaVacunacion> update(@PathVariable Long id, @RequestBody CartillaVacunacion cartilla) {
+    public ResponseEntity<CartillaVacunacionResponse> update(@PathVariable Long id, @RequestBody CartillaVacunacion cartilla) {
         cartilla.setId(id);
-        return ResponseEntity.ok(service.update(cartilla));
+        return ResponseEntity.ok(CartillaVacunacionResponse.from(service.update(cartilla)));
     }
 
     @PatchMapping("/{id}/desactivar")

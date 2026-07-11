@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.salud.CondicionMedicaResponse;
 import pe.edu.utp.vacunacioncard.model.salud.CondicionMedica;
 import pe.edu.utp.vacunacioncard.service.salud.ICondicionMedicaService;
 
@@ -21,30 +22,30 @@ public class CondicionMedicaController {
 
     @GetMapping
     @Operation(summary = "Lista todas las condiciones médicas", operationId = "getAllCondicionesMedicas")
-    public ResponseEntity<List<CondicionMedica>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<CondicionMedicaResponse>> getAll() {
+        return ResponseEntity.ok(service.getAll().stream().map(CondicionMedicaResponse::from).toList());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtiene una condición médica por ID", operationId = "getCondicionMedicaById")
-    public ResponseEntity<CondicionMedica> getById(@PathVariable Long id) {
+    public ResponseEntity<CondicionMedicaResponse> getById(@PathVariable Long id) {
         return service.getById(id)
-                .map(ResponseEntity::ok)
+                .map(c -> ResponseEntity.ok(CondicionMedicaResponse.from(c)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/cie10/{codigo}")
     @Operation(summary = "Busca una condición médica por código CIE-10", operationId = "getCondicionMedicaByIcd10")
-    public ResponseEntity<CondicionMedica> getByIcd10(@PathVariable String codigo) {
+    public ResponseEntity<CondicionMedicaResponse> getByIcd10(@PathVariable String codigo) {
         return service.findByIcd10Code(codigo)
-                .map(ResponseEntity::ok)
+                .map(c -> ResponseEntity.ok(CondicionMedicaResponse.from(c)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     @Operation(summary = "Registra una nueva condición médica", operationId = "createCondicionMedica")
-    public ResponseEntity<CondicionMedica> create(@RequestBody CondicionMedica condicion) {
+    public ResponseEntity<CondicionMedicaResponse> create(@RequestBody CondicionMedica condicion) {
         CondicionMedica creada = service.create(condicion);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CondicionMedicaResponse.from(creada));
     }
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.vacunacion.VacunaResponse;
 import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IVacunaService;
 
@@ -21,35 +22,35 @@ public class VacunaController {
 
     @GetMapping
     @Operation(summary = "Lista todas las vacunas", operationId = "getAllVacunas")
-    public ResponseEntity<List<Vacuna>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<VacunaResponse>> getAll() {
+        return ResponseEntity.ok(service.getAll().stream().map(VacunaResponse::from).toList());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtiene una vacuna por ID", operationId = "getVacunaById")
-    public ResponseEntity<Vacuna> getById(@PathVariable Long id) {
+    public ResponseEntity<VacunaResponse> getById(@PathVariable Long id) {
         return service.getById(id)
-                .map(ResponseEntity::ok)
+                .map(v -> ResponseEntity.ok(VacunaResponse.from(v)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/disponibles/{disponible}")
     @Operation(summary = "Filtra vacunas por disponibilidad", operationId = "getVacunasByAvailability")
-    public ResponseEntity<List<Vacuna>> getByAvailability(@PathVariable boolean disponible) {
-        return ResponseEntity.ok(service.findByAvailability(disponible));
+    public ResponseEntity<List<VacunaResponse>> getByAvailability(@PathVariable boolean disponible) {
+        return ResponseEntity.ok(service.findByAvailability(disponible).stream().map(VacunaResponse::from).toList());
     }
 
     @PostMapping
     @Operation(summary = "Registra una nueva vacuna en el catálogo (solo admin)", operationId = "createVacuna")
-    public ResponseEntity<Vacuna> create(@RequestBody Vacuna vacuna) {
+    public ResponseEntity<VacunaResponse> create(@RequestBody Vacuna vacuna) {
         Vacuna creada = service.create(vacuna);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        return ResponseEntity.status(HttpStatus.CREATED).body(VacunaResponse.from(creada));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza una vacuna del catálogo (solo admin)", operationId = "updateVacuna")
-    public ResponseEntity<Vacuna> update(@PathVariable Long id, @RequestBody Vacuna vacuna) {
+    public ResponseEntity<VacunaResponse> update(@PathVariable Long id, @RequestBody Vacuna vacuna) {
         vacuna.setId(id);
-        return ResponseEntity.ok(service.update(vacuna));
+        return ResponseEntity.ok(VacunaResponse.from(service.update(vacuna)));
     }
 }

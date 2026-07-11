@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.campania.CampaniaVacunacionResponse;
 import pe.edu.utp.vacunacioncard.model.campania.CampaniaVacunacion;
 import pe.edu.utp.vacunacioncard.service.campania.ICampaniaVacunacionService;
 
@@ -21,35 +22,35 @@ public class CampaniaVacunacionController {
 
     @GetMapping
     @Operation(summary = "Lista todas las campañas", operationId = "getAllCampanias")
-    public ResponseEntity<List<CampaniaVacunacion>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<CampaniaVacunacionResponse>> getAll() {
+        return ResponseEntity.ok(service.getAll().stream().map(CampaniaVacunacionResponse::from).toList());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtiene una campaña por ID", operationId = "getCampaniaById")
-    public ResponseEntity<CampaniaVacunacion> getById(@PathVariable Long id) {
+    public ResponseEntity<CampaniaVacunacionResponse> getById(@PathVariable Long id) {
         return service.getById(id)
-                .map(ResponseEntity::ok)
+                .map(c -> ResponseEntity.ok(CampaniaVacunacionResponse.from(c)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/estado/{estado}")
     @Operation(summary = "Filtra campañas por estado", operationId = "getCampaniasByStatus")
-    public ResponseEntity<List<CampaniaVacunacion>> getByStatus(@PathVariable String estado) {
-        return ResponseEntity.ok(service.findByStatus(estado));
+    public ResponseEntity<List<CampaniaVacunacionResponse>> getByStatus(@PathVariable String estado) {
+        return ResponseEntity.ok(service.findByStatus(estado).stream().map(CampaniaVacunacionResponse::from).toList());
     }
 
     @PostMapping
     @Operation(summary = "Crea una nueva campaña de vacunación", operationId = "createCampania")
-    public ResponseEntity<CampaniaVacunacion> create(@RequestBody CampaniaVacunacion campania) {
+    public ResponseEntity<CampaniaVacunacionResponse> create(@RequestBody CampaniaVacunacion campania) {
         CampaniaVacunacion creada = service.create(campania);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
+        return ResponseEntity.status(HttpStatus.CREATED).body(CampaniaVacunacionResponse.from(creada));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza el progreso de una campaña", operationId = "updateCampania")
-    public ResponseEntity<CampaniaVacunacion> update(@PathVariable Long id, @RequestBody CampaniaVacunacion campania) {
+    public ResponseEntity<CampaniaVacunacionResponse> update(@PathVariable Long id, @RequestBody CampaniaVacunacion campania) {
         campania.setId(id);
-        return ResponseEntity.ok(service.update(campania));
+        return ResponseEntity.ok(CampaniaVacunacionResponse.from(service.update(campania)));
     }
 }
