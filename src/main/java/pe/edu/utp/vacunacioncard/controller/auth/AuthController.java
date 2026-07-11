@@ -1,5 +1,7 @@
 package pe.edu.utp.vacunacioncard.controller.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Autenticación", description = "Registro, inicio y cierre de sesión")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -35,6 +38,7 @@ public class AuthController {
      * @return La cuenta creada con estado HTTP 201.
      */
     @PostMapping("/register")
+    @Operation(summary = "Registra una nueva cuenta de usuario", operationId = "register")
     public ResponseEntity<CuentaResponse> register(@RequestBody RegisterRequest request) {
         CuentaUsuario cuenta = CuentaUsuario.builder()
                 .username(request.username())
@@ -51,6 +55,7 @@ public class AuthController {
      * @return El token y los datos básicos de la cuenta autenticada.
      */
     @PostMapping("/login")
+    @Operation(summary = "Inicia sesión y devuelve un token de sesión", operationId = "login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         CuentaUsuario cuenta = cuentaService.authenticate(request.username(), request.password());
 
@@ -73,6 +78,7 @@ public class AuthController {
      * @return Respuesta sin contenido (HTTP 204).
      */
     @PostMapping("/logout")
+    @Operation(summary = "Cierra la sesión asociada a un token", operationId = "logout")
     public ResponseEntity<Void> logout(@RequestBody LogoutRequest request) {
         sesionService.findByToken(request.token())
                 .ifPresent(sesion -> sesionService.closeSession(sesion.getId()));

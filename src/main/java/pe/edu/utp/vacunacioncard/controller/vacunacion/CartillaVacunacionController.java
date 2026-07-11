@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.vacunacion.CartillaVacunacionRequest;
 import pe.edu.utp.vacunacioncard.dto.vacunacion.CartillaVacunacionResponse;
 import pe.edu.utp.vacunacioncard.model.vacunacion.CartillaVacunacion;
 import pe.edu.utp.vacunacioncard.service.vacunacion.ICartillaVacunacionService;
@@ -52,14 +53,15 @@ public class CartillaVacunacionController {
 
     @PostMapping
     @Operation(summary = "Crea una nueva cartilla de vacunación", operationId = "createCartilla")
-    public ResponseEntity<CartillaVacunacionResponse> create(@RequestBody CartillaVacunacion cartilla) {
-        CartillaVacunacion creada = service.create(cartilla);
+    public ResponseEntity<CartillaVacunacionResponse> create(@RequestBody CartillaVacunacionRequest request) {
+        CartillaVacunacion creada = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(CartillaVacunacionResponse.from(creada));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza una cartilla existente", operationId = "updateCartilla")
-    public ResponseEntity<CartillaVacunacionResponse> update(@PathVariable Long id, @RequestBody CartillaVacunacion cartilla) {
+    public ResponseEntity<CartillaVacunacionResponse> update(@PathVariable Long id, @RequestBody CartillaVacunacionRequest request) {
+        CartillaVacunacion cartilla = request.toEntity();
         cartilla.setId(id);
         return ResponseEntity.ok(CartillaVacunacionResponse.from(service.update(cartilla)));
     }

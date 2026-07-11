@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.salud.AlergiaRequest;
 import pe.edu.utp.vacunacioncard.dto.salud.AlergiaResponse;
 import pe.edu.utp.vacunacioncard.model.salud.Alergia;
 import pe.edu.utp.vacunacioncard.service.salud.IAlergiaService;
@@ -42,8 +43,8 @@ public class AlergiaController {
 
     @PostMapping
     @Operation(summary = "Registra una nueva alergia en el catálogo", operationId = "createAlergia")
-    public ResponseEntity<AlergiaResponse> create(@RequestBody Alergia alergia) {
-        Alergia creada = service.create(alergia);
+    public ResponseEntity<AlergiaResponse> create(@RequestBody AlergiaRequest request) {
+        Alergia creada = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(AlergiaResponse.from(creada));
     }
 }

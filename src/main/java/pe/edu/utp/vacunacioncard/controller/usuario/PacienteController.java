@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.usuario.PacienteRequest;
 import pe.edu.utp.vacunacioncard.dto.usuario.PacienteResponse;
 import pe.edu.utp.vacunacioncard.model.usuario.Paciente;
 import pe.edu.utp.vacunacioncard.service.usuario.IPacienteService;
@@ -44,14 +45,15 @@ public class PacienteController {
 
     @PostMapping
     @Operation(summary = "Registra un nuevo paciente", operationId = "createPaciente")
-    public ResponseEntity<PacienteResponse> create(@RequestBody Paciente paciente) {
-        Paciente creado = service.create(paciente);
+    public ResponseEntity<PacienteResponse> create(@RequestBody PacienteRequest request) {
+        Paciente creado = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(PacienteResponse.from(creado));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza un paciente existente", operationId = "updatePaciente")
-    public ResponseEntity<PacienteResponse> update(@PathVariable Long id, @RequestBody Paciente paciente) {
+    public ResponseEntity<PacienteResponse> update(@PathVariable Long id, @RequestBody PacienteRequest request) {
+        Paciente paciente = request.toEntity();
         paciente.setId(id);
         return ResponseEntity.ok(PacienteResponse.from(service.update(paciente)));
     }

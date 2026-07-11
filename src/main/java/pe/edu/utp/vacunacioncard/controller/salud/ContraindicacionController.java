@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.salud.ContraindicacionRequest;
 import pe.edu.utp.vacunacioncard.dto.salud.ContraindicacionResponse;
 import pe.edu.utp.vacunacioncard.model.salud.Contraindicacion;
 import pe.edu.utp.vacunacioncard.service.salud.IContraindicacionService;
@@ -34,8 +35,8 @@ public class ContraindicacionController {
 
     @PostMapping
     @Operation(summary = "Registra una nueva contraindicación", operationId = "createContraindicacion")
-    public ResponseEntity<ContraindicacionResponse> create(@RequestBody Contraindicacion contraindicacion) {
-        Contraindicacion creada = service.create(contraindicacion);
+    public ResponseEntity<ContraindicacionResponse> create(@RequestBody ContraindicacionRequest request) {
+        Contraindicacion creada = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(ContraindicacionResponse.from(creada));
     }
 }

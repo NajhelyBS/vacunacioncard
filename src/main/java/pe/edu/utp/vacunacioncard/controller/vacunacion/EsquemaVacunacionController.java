@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.vacunacion.EsquemaVacunacionRequest;
 import pe.edu.utp.vacunacioncard.dto.vacunacion.EsquemaVacunacionResponse;
 import pe.edu.utp.vacunacioncard.model.vacunacion.EsquemaVacunacion;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IEsquemaVacunacionService;
@@ -42,14 +43,15 @@ public class EsquemaVacunacionController {
 
     @PostMapping
     @Operation(summary = "Asigna un nuevo esquema de vacunación", operationId = "createEsquema")
-    public ResponseEntity<EsquemaVacunacionResponse> create(@RequestBody EsquemaVacunacion esquema) {
-        EsquemaVacunacion creado = service.create(esquema);
+    public ResponseEntity<EsquemaVacunacionResponse> create(@RequestBody EsquemaVacunacionRequest request) {
+        EsquemaVacunacion creado = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(EsquemaVacunacionResponse.from(creado));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza un esquema existente", operationId = "updateEsquema")
-    public ResponseEntity<EsquemaVacunacionResponse> update(@PathVariable Long id, @RequestBody EsquemaVacunacion esquema) {
+    public ResponseEntity<EsquemaVacunacionResponse> update(@PathVariable Long id, @RequestBody EsquemaVacunacionRequest request) {
+        EsquemaVacunacion esquema = request.toEntity();
         esquema.setId(id);
         return ResponseEntity.ok(EsquemaVacunacionResponse.from(service.update(esquema)));
     }

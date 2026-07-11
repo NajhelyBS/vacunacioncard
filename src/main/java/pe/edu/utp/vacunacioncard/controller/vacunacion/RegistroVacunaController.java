@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.vacunacion.RegistroVacunaRequest;
 import pe.edu.utp.vacunacioncard.dto.vacunacion.RegistroVacunaResponse;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IRegistroVacunaService;
@@ -42,14 +43,15 @@ public class RegistroVacunaController {
 
     @PostMapping
     @Operation(summary = "Registra la aplicación de una nueva dosis", operationId = "createRegistroVacuna")
-    public ResponseEntity<RegistroVacunaResponse> create(@RequestBody RegistroVacuna registro) {
-        RegistroVacuna creado = service.create(registro);
+    public ResponseEntity<RegistroVacunaResponse> create(@RequestBody RegistroVacunaRequest request) {
+        RegistroVacuna creado = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(RegistroVacunaResponse.from(creado));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza un registro de vacuna existente", operationId = "updateRegistroVacuna")
-    public ResponseEntity<RegistroVacunaResponse> update(@PathVariable Long id, @RequestBody RegistroVacuna registro) {
+    public ResponseEntity<RegistroVacunaResponse> update(@PathVariable Long id, @RequestBody RegistroVacunaRequest request) {
+        RegistroVacuna registro = request.toEntity();
         registro.setId(id);
         return ResponseEntity.ok(RegistroVacunaResponse.from(service.update(registro)));
     }

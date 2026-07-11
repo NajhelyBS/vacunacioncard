@@ -1,5 +1,7 @@
 package pe.edu.utp.vacunacioncard.controller.notificacion;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/notificaciones")
+@Tag(name = "Notificaciones", description = "Consulta de notificaciones y registro de alertas y recordatorios")
 @RequiredArgsConstructor
 public class NotificacionController {
 
@@ -38,6 +41,7 @@ public class NotificacionController {
      * @return Lista de notificaciones en formato público.
      */
     @GetMapping("/usuario/{usuarioId}")
+    @Operation(summary = "Lista las notificaciones de un usuario, filtrables por estado", operationId = "getNotificacionesByUser")
     public List<NotificacionResponse> findByUser(@PathVariable Long usuarioId,
                                                  @RequestParam(required = false) String estado) {
         List<Notificacion> notificaciones = (estado == null || estado.isBlank())
@@ -55,6 +59,7 @@ public class NotificacionController {
      * @return La notificación actualizada.
      */
     @PatchMapping("/{id}/leida")
+    @Operation(summary = "Marca una notificación como leída", operationId = "markNotificacionAsRead")
     public NotificacionResponse markAsRead(@PathVariable Long id) {
         return NotificacionResponse.from(notificacionService.markAsRead(id));
     }
@@ -66,6 +71,7 @@ public class NotificacionController {
      * @return Respuesta sin contenido (HTTP 201).
      */
     @PostMapping("/alerta")
+    @Operation(summary = "Registra una alerta de sistema (Factory Method)", operationId = "registerAlerta")
     public ResponseEntity<Void> registerAlert(@RequestBody AlertaRequest request) {
         Usuario usuario = buscarUsuario(request.usuarioId());
         notificacionService.registerAlert(usuario, request.mensaje());
@@ -79,6 +85,7 @@ public class NotificacionController {
      * @return Respuesta sin contenido (HTTP 201).
      */
     @PostMapping("/recordatorio")
+    @Operation(summary = "Registra un recordatorio de próxima dosis (Factory Method)", operationId = "registerRecordatorio")
     public ResponseEntity<Void> registerVaccineReminder(@RequestBody RecordatorioRequest request) {
         Usuario usuario = buscarUsuario(request.usuarioId());
         RegistroVacuna registro = registroVacunaRepository.findById(request.registroVacunaId())

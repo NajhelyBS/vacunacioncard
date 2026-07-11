@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.salud.CondicionMedicaRequest;
 import pe.edu.utp.vacunacioncard.dto.salud.CondicionMedicaResponse;
 import pe.edu.utp.vacunacioncard.model.salud.CondicionMedica;
 import pe.edu.utp.vacunacioncard.service.salud.ICondicionMedicaService;
@@ -44,8 +45,8 @@ public class CondicionMedicaController {
 
     @PostMapping
     @Operation(summary = "Registra una nueva condición médica", operationId = "createCondicionMedica")
-    public ResponseEntity<CondicionMedicaResponse> create(@RequestBody CondicionMedica condicion) {
-        CondicionMedica creada = service.create(condicion);
+    public ResponseEntity<CondicionMedicaResponse> create(@RequestBody CondicionMedicaRequest request) {
+        CondicionMedica creada = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(CondicionMedicaResponse.from(creada));
     }
 }

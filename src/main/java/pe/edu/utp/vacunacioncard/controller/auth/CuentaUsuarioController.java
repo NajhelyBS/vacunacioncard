@@ -1,5 +1,7 @@
 package pe.edu.utp.vacunacioncard.controller.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/cuentas")
+@Tag(name = "Cuentas", description = "Consulta y baja de cuentas de usuario")
 @RequiredArgsConstructor
 public class CuentaUsuarioController {
 
@@ -25,6 +28,7 @@ public class CuentaUsuarioController {
      * @return Lista de cuentas en formato público.
      */
     @GetMapping
+    @Operation(summary = "Lista todas las cuentas de usuario", operationId = "getAllCuentas")
     public List<CuentaResponse> getAll() {
         return cuentaService.getAll().stream()
                 .map(CuentaResponse::from)
@@ -38,6 +42,7 @@ public class CuentaUsuarioController {
      * @return La cuenta si existe (HTTP 200), o HTTP 404 en caso contrario.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Obtiene una cuenta por ID", operationId = "getCuentaById")
     public ResponseEntity<CuentaResponse> getById(@PathVariable Long id) {
         return cuentaService.getById(id)
                 .map(cuenta -> ResponseEntity.ok(CuentaResponse.from(cuenta)))
@@ -51,6 +56,7 @@ public class CuentaUsuarioController {
      * @return Respuesta sin contenido (HTTP 204).
      */
     @DeleteMapping("/{id}")
+    @Operation(summary = "Elimina una cuenta por ID", operationId = "deleteCuentaById")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         cuentaService.deleteById(id);
         return ResponseEntity.noContent().build();

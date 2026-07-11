@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.vacunacion.VacunaRequest;
 import pe.edu.utp.vacunacioncard.dto.vacunacion.VacunaResponse;
 import pe.edu.utp.vacunacioncard.model.vacunacion.Vacuna;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IVacunaService;
@@ -42,14 +43,15 @@ public class VacunaController {
 
     @PostMapping
     @Operation(summary = "Registra una nueva vacuna en el catálogo (solo admin)", operationId = "createVacuna")
-    public ResponseEntity<VacunaResponse> create(@RequestBody Vacuna vacuna) {
-        Vacuna creada = service.create(vacuna);
+    public ResponseEntity<VacunaResponse> create(@RequestBody VacunaRequest request) {
+        Vacuna creada = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(VacunaResponse.from(creada));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza una vacuna del catálogo (solo admin)", operationId = "updateVacuna")
-    public ResponseEntity<VacunaResponse> update(@PathVariable Long id, @RequestBody Vacuna vacuna) {
+    public ResponseEntity<VacunaResponse> update(@PathVariable Long id, @RequestBody VacunaRequest request) {
+        Vacuna vacuna = request.toEntity();
         vacuna.setId(id);
         return ResponseEntity.ok(VacunaResponse.from(service.update(vacuna)));
     }

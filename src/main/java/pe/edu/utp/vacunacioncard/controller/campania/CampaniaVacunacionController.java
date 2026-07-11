@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.utp.vacunacioncard.dto.campania.CampaniaVacunacionRequest;
 import pe.edu.utp.vacunacioncard.dto.campania.CampaniaVacunacionResponse;
 import pe.edu.utp.vacunacioncard.model.campania.CampaniaVacunacion;
 import pe.edu.utp.vacunacioncard.service.campania.ICampaniaVacunacionService;
@@ -42,14 +43,15 @@ public class CampaniaVacunacionController {
 
     @PostMapping
     @Operation(summary = "Crea una nueva campaña de vacunación", operationId = "createCampania")
-    public ResponseEntity<CampaniaVacunacionResponse> create(@RequestBody CampaniaVacunacion campania) {
-        CampaniaVacunacion creada = service.create(campania);
+    public ResponseEntity<CampaniaVacunacionResponse> create(@RequestBody CampaniaVacunacionRequest request) {
+        CampaniaVacunacion creada = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(CampaniaVacunacionResponse.from(creada));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza el progreso de una campaña", operationId = "updateCampania")
-    public ResponseEntity<CampaniaVacunacionResponse> update(@PathVariable Long id, @RequestBody CampaniaVacunacion campania) {
+    public ResponseEntity<CampaniaVacunacionResponse> update(@PathVariable Long id, @RequestBody CampaniaVacunacionRequest request) {
+        CampaniaVacunacion campania = request.toEntity();
         campania.setId(id);
         return ResponseEntity.ok(CampaniaVacunacionResponse.from(service.update(campania)));
     }
