@@ -28,15 +28,24 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class NotificacionServiceImpl implements INotificacionService {
-    
+
     /** Zona horaria oficial para el registro y envío de alertas. */
     private static final String ZONE_LIMA = "America/Lima";
+
+    /** Estado asignado a una notificación despachada. */
+    private static final String ESTADO_ENVIADA = "ENVIADA";
+
+    /** Estado asignado a una notificación pendiente de despacho. */
+    private static final String ESTADO_PENDIENTE = "PENDIENTE";
+
+    /** Estado asignado a una notificación ya consultada por el destinatario. */
+    private static final String ESTADO_LEIDA = "LEIDA";
 
     private final NotificacionRepository repo;
 
     /**
      * Procesa y despacha de forma inmediata una notificación configurada previamente.
-     * Modifica internamente el estado de la notificación a "ENVIADA" y estampa 
+     * Modifica internamente el estado de la notificación a "ENVIADA" y estampa
      * la marca de tiempo bajo la zona horaria {@code America/Lima}.
      *
      * @param notificacion Entidad {@link Notificacion} con la información base y el destinatario asignado.
@@ -45,11 +54,11 @@ public class NotificacionServiceImpl implements INotificacionService {
      */
     @Override
     @Transactional
-    public Notificacion enviarNotificacion(Notificacion notificacion) {
+    public Notificacion sendNotification(Notificacion notificacion) {
         log.info("Enviando notificación al usuario ID: {}", notificacion.getDestinatario().getId());
         try {
             notificacion.setFechaEnvio(LocalDateTime.now(ZoneId.of(ZONE_LIMA)));
-            notificacion.setEstado("ENVIADA");
+            notificacion.setEstado(ESTADO_ENVIADA);
             Notificacion guardada = repo.save(notificacion);
             log.info("Notificación enviada con ID: {}", guardada.getId());
             return guardada;
@@ -66,9 +75,48 @@ public class NotificacionServiceImpl implements INotificacionService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Notificacion> listarPorUsuario(Long usuarioId) {
+    public List<Notificacion> findByUser(Long usuarioId) {
         log.info("Listando notificaciones del usuario ID: {}", usuarioId);
         return repo.findByDestinatarioId(usuarioId);
+    }
+
+    /**
+     * Recupera las notificaciones de un usuario filtradas por su estado (p. ej. "ENVIADA", "PENDIENTE").
+     * La comparación del estado es insensible a mayúsculas y minúsculas.
+     *
+     * @param usuarioId Identificador único del usuario receptor.
+     * @param estado    Estado por el cual filtrar el buzón del usuario.
+     * @return {@link List} de {@link Notificacion} del usuario que coinciden con el estado solicitado.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<Notificacion> findByUserAndStatus(Long usuarioId, String estado) {
+        log.info("Listando notificaciones del usuario ID: {} con estado: {}", usuarioId, estado);
+        return repo.findByDestinatarioIdAndEstadoIgnoreCase(usuarioId, estado);
+    }
+
+    /**
+     * Marca una notificación como leída cambiando su estado a "LEIDA".
+     *
+     * @param notificacionId Identificador único de la notificación a marcar.
+     * @return La entidad {@link Notificacion} actualizada.
+     * @throws ServiceException Si la notificación no existe o si ocurre un fallo al persistir el cambio.
+     */
+    @Override
+    @Transactional
+    public Notificacion markAsRead(Long notificacionId) {
+        log.info("Marcando como leída la notificación ID: {}", notificacionId);
+        try {
+            Notificacion notificacion = repo.findById(notificacionId)
+                    .orElseThrow(() -> new ServiceException(
+                            "No existe una notificación con ID: " + notificacionId, null));
+            notificacion.setEstado(ESTADO_LEIDA);
+            Notificacion actualizada = repo.save(notificacion);
+            log.info("Notificación ID: {} marcada como leída", notificacionId);
+            return actualizada;
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al marcar la notificación como leída ID: " + notificacionId, e);
+        }
     }
 
     /**
@@ -82,16 +130,16 @@ public class NotificacionServiceImpl implements INotificacionService {
      */
     @Override
     @Transactional
-    public void registrarNuevaAlerta(Usuario usuario, String mensaje) {
+    public void registerAlert(Usuario usuario, String mensaje) {
         log.info("Creando alerta para usuario ID: {}", usuario.getId());
-        
+
         // EMPLEACIÓN DEL PATRÓN: Instanciamos la fábrica concreta para tipos de Sistema/Alerta
         INotificacionFactory factory = new SistemaNotificacionFactory("ALERTA");
-        Notificacion nuevaAlerta = factory.crearNotificacion(usuario, mensaje);
-        
+        Notificacion nuevaAlerta = factory.createNotification(usuario, mensaje);
+
         try {
             nuevaAlerta.setFechaEnvio(LocalDateTime.now(ZoneId.of(ZONE_LIMA)));
-            nuevaAlerta.setEstado("ENVIADA");
+            nuevaAlerta.setEstado(ESTADO_ENVIADA);
             repo.save(nuevaAlerta);
             log.info("Alerta registrada para usuario ID: {}", usuario.getId());
         } catch (DataAccessException e) {
@@ -112,16 +160,16 @@ public class NotificacionServiceImpl implements INotificacionService {
      */
     @Override
     @Transactional
-    public void registrarRecordatorioVacuna(Usuario usuario, RegistroVacuna registro, LocalDateTime fecha) {
+    public void registerVaccineReminder(Usuario usuario, RegistroVacuna registro, LocalDateTime fecha) {
         log.info("Creando recordatorio de vacuna para usuario ID: {}", usuario.getId());
-        
+
         // EMPLEACIÓN DEL PATRÓN: Instanciamos la fábrica de Recordatorios inyectando sus dependencias requeridas
         INotificacionFactory factory = new RecordatorioNotificacionFactory(registro, fecha);
-        Notificacion recordatorio = factory.crearNotificacion(usuario, null);
-        
+        Notificacion recordatorio = factory.createNotification(usuario, null);
+
         try {
             recordatorio.setFechaEnvio(LocalDateTime.now(ZoneId.of(ZONE_LIMA)));
-            recordatorio.setEstado("PENDIENTE");
+            recordatorio.setEstado(ESTADO_PENDIENTE);
             repo.save(recordatorio);
             log.info("Recordatorio registrado para usuario ID: {}", usuario.getId());
         } catch (DataAccessException e) {

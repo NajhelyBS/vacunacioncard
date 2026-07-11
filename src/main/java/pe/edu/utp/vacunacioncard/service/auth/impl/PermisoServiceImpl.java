@@ -33,7 +33,7 @@ public class PermisoServiceImpl implements IPermisoService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<Permiso> listarTodos() {
+    public List<Permiso> getAll() {
         log.info("Listando todos los permisos");
         return repo.findAll();
     }
@@ -47,7 +47,7 @@ public class PermisoServiceImpl implements IPermisoService {
      */
     @Override
     @Transactional
-    public Permiso guardar(Permiso permiso) {
+    public Permiso create(Permiso permiso) {
         log.info("Guardando permiso con código: {}", permiso.getCodigo());
         try {
             Permiso guardado = repo.save(permiso);
@@ -59,15 +59,14 @@ public class PermisoServiceImpl implements IPermisoService {
     }
 
      /**
-     * Registra o actualiza un permiso en el sistema.
+     * Busca un permiso en el sistema filtrándolo por su código único.
      *
-     * @param permiso Entidad {@link Permiso} con los datos a persistir.
-     * @return La entidad {@link Permiso} guardada con su identificador asignado.
-     * @throws ServiceException Si ocurre un error a nivel de base de datos durante el guardado.
+     * @param codigo Código identificador del permiso.
+     * @return Un {@link Optional} con el {@link Permiso} hallado, o vacío si no coincide ninguno.
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<Permiso> buscarPorCodigo(String codigo) {
+    public Optional<Permiso> findByCode(String codigo) {
         log.info("Buscando permiso por código: {}", codigo);
         return repo.findByCodigo(codigo);
     }
@@ -80,7 +79,7 @@ public class PermisoServiceImpl implements IPermisoService {
      */
     @Override
     @Transactional
-    public void eliminar(Long id) {
+    public void deleteById(Long id) {
         log.info("Eliminando permiso con ID: {}", id);
         try {
             repo.deleteById(id);

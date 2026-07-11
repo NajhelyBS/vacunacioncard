@@ -31,7 +31,7 @@ public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<CuentaUsuario> listarTodas() {
+    public List<CuentaUsuario> getAll() {
         log.info("Listando todas las cuentas de usuario");
         return repo.findAll();
     }
@@ -39,14 +39,28 @@ public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
     /**
      * Busca una cuenta de usuario específica mediante su identificador único.
      * @param id Identificador único de la cuenta de usuario.
-     * @return Un {@link Optional} que contiene la {@link CuentaUsuario} si se encuentra, 
+     * @return Un {@link Optional} que contiene la {@link CuentaUsuario} si se encuentra,
      *         o un contenedor vacío si no existe.
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<CuentaUsuario> buscarPorId(Long id) {
+    public Optional<CuentaUsuario> getById(Long id) {
         log.info("Buscando cuenta por ID: {}", id);
         return repo.findById(id);
+    }
+
+    /**
+     * Busca una cuenta de usuario a partir de su nombre de usuario (username).
+     * Resulta esencial para los flujos de autenticación e inicio de sesión.
+     *
+     * @param username Nombre de usuario único asociado a la cuenta.
+     * @return Un {@link Optional} con la {@link CuentaUsuario} si existe, o vacío en caso contrario.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<CuentaUsuario> findByUsername(String username) {
+        log.info("Buscando cuenta por username: {}", username);
+        return repo.findByUsername(username);
     }
 
     /**
@@ -58,7 +72,7 @@ public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
      */
     @Override
     @Transactional
-    public CuentaUsuario registrar(CuentaUsuario cuenta) {
+    public CuentaUsuario create(CuentaUsuario cuenta) {
         log.info("Registrando cuenta para username: {}", cuenta.getUsername());
         try {
             CuentaUsuario guardada = repo.save(cuenta);
@@ -77,7 +91,7 @@ public class CuentaUsuarioServiceImpl implements ICuentaUsuarioService {
      */
     @Override
     @Transactional
-    public void eliminar(Long id) {
+    public void deleteById(Long id) {
         log.info("Eliminando cuenta con ID: {}", id);
         try {
             repo.deleteById(id);

@@ -26,7 +26,7 @@ public class RecordatorioNotificacionFactory implements INotificacionFactory {
      * @return
      */
     @Override
-    public Notificacion crearNotificacion(Usuario destinatario, String mensaje) {
+    public Notificacion createNotification(Usuario destinatario, String mensaje) {
         return new NotificacionRecordatorio(destinatario, this.registroVacuna, this.fechaRecordatorio);
     }
 }

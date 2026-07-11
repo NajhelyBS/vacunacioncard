@@ -14,7 +14,7 @@ public class SistemaNotificacionFactory implements INotificacionFactory {
     /**
      * Constructor de la fábrica. Reutiliza las validaciones originales.
      */
-    public String validarTipo(String tipo) {
+    public String validateType(String tipo) {
         if (tipo == null || tipo.isBlank()) {
             throw new IllegalArgumentException("El tipo de notificación no puede ser nulo o vacío");
         }
@@ -22,7 +22,7 @@ public class SistemaNotificacionFactory implements INotificacionFactory {
     }
 
     public SistemaNotificacionFactory(String tipo) {
-        this.tipo = validarTipo(tipo);
+        this.tipo = validateType(tipo);
     }
 
     /**
@@ -32,7 +32,7 @@ public class SistemaNotificacionFactory implements INotificacionFactory {
      * @return
      */
     @Override
-    public Notificacion crearNotificacion(Usuario destinatario, String mensaje) {
+    public Notificacion createNotification(Usuario destinatario, String mensaje) {
         return switch (this.tipo) {
             case "SISTEMA", "ALERTA", "INFORMACION" -> new NotificacionSistema(destinatario, mensaje, this.tipo);
             default -> throw new IllegalArgumentException("Tipo de notificación de sistema no soportado: " + this.tipo);

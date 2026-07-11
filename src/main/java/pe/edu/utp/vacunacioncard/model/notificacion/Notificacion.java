@@ -39,6 +39,12 @@ public abstract class Notificacion implements Serializable {
     @Column(name = "estado")
     private String estado = "PENDIENTE";
 
+    /**
+     * Constructor base para las subclases de notificación.
+     *
+     * @param destinatario Usuario que recibirá la notificación.
+     * @param mensaje      Contenido textual de la notificación.
+     */
     protected Notificacion(Usuario destinatario, String mensaje) {
         this.destinatario = destinatario;
         this.mensaje = mensaje;

@@ -16,5 +16,5 @@ public interface INotificacionFactory {
      * @param mensaje El cuerpo o contenido del mensaje.
      * @return Una instancia concreta de un subtipo de Notificacion.
      */
-    Notificacion crearNotificacion(Usuario destinatario, String mensaje);
+    Notificacion createNotification(Usuario destinatario, String mensaje);
 }
