@@ -1,6 +1,5 @@
 package pe.edu.utp.vacunacioncard.service.cita.impl;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -12,23 +11,26 @@ import pe.edu.utp.vacunacioncard.model.cita.CitaVacunacion;
 import pe.edu.utp.vacunacioncard.repository.cita.CitaVacunacionRepository;
 import pe.edu.utp.vacunacioncard.service.cita.ICitaVacunacionService;
 
-
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * Implementación del servicio para la gestión de citas de vacunación.
+ * Proporciona la lógica de negocio para listar, buscar, registrar,
+ * actualizar y remover programaciones de vacunas en el sistema.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CitaVacunacionServiceImpl implements ICitaVacunacionService {
 
-
     private final CitaVacunacionRepository repo;
 
-
+    /**
+     * Recupera la totalidad de las citas de vacunación registradas en el sistema.
+     *
+     * @return Una lista con todas las entidades {@link CitaVacunacion} encontradas.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<CitaVacunacion> getAll() {
@@ -36,7 +38,12 @@ public class CitaVacunacionServiceImpl implements ICitaVacunacionService {
         return this.repo.findAll();
     }
 
-
+    /**
+     * Busca el registro clínico de una cita de vacunación mediante su identificador único.
+     *
+     * @param id El identificador único de la cita.
+     * @return Un contenedor {@link Optional} que aloja la cita si se encuentra, o vacío en caso contrario.
+     */
     @Override
     @Transactional(readOnly = true)
     public Optional<CitaVacunacion> findById(Long id) {
@@ -44,13 +51,18 @@ public class CitaVacunacionServiceImpl implements ICitaVacunacionService {
         return this.repo.findById(id);
     }
 
-
+    /**
+     * Registra y programa una nueva cita de vacunación en el repositorio.
+     *
+     * @param cita La entidad {@link CitaVacunacion} con los datos de la nueva programación.
+     * @return La entidad persistida con su respectivo identificador generado.
+     * @throws ServiceException Si ocurre una anomalía a nivel de datos durante el registro.
+     */
     @Override
     @Transactional
     public CitaVacunacion create(CitaVacunacion cita) {
         log.info("Programando cita para paciente ID: {}",
                 cita.getPaciente() != null ? cita.getPaciente().getId() : "N/A");
-
 
         return ServiceExceptionHandler.execute(
                 () -> this.repo.save(cita),
@@ -58,8 +70,14 @@ public class CitaVacunacionServiceImpl implements ICitaVacunacionService {
         );
     }
 
-
-    // Actualización de una cita existente
+    /**
+     * Actualiza los datos de una cita de vacunación ya existente en el sistema.
+     * Verifica previamente la existencia de la cita antes de persistir los cambios.
+     *
+     * @param cita La entidad {@link CitaVacunacion} con los valores actualizados.
+     * @return La entidad modificada y guardada en la base de datos.
+     * @throws ServiceException Si el ID es nulo, si la cita no existe o si ocurre un fallo en la persistencia.
+     */
     @Override
     @Transactional
     public CitaVacunacion update(CitaVacunacion cita) {
@@ -74,7 +92,12 @@ public class CitaVacunacionServiceImpl implements ICitaVacunacionService {
         }
     }
 
-
+    /**
+     * Obtiene el historial de citas médicas asociadas a un paciente en específico.
+     *
+     * @param patientId El identificador único del paciente.
+     * @return Una lista de {@link CitaVacunacion} correspondientes al paciente indicado.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<CitaVacunacion> findByPatient(Long patientId) {
@@ -82,7 +105,12 @@ public class CitaVacunacionServiceImpl implements ICitaVacunacionService {
         return this.repo.findByPacienteId(patientId);
     }
 
-
+    /**
+     * Filtra y lista las citas de vacunación según su estado operativo actual.
+     *
+     * @param status El estado clínico o administrativo a filtrar (ej. PENDIENTE, COMPLETADA).
+     * @return Una lista de {@link CitaVacunacion} que cumplen con el estado especificado.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<CitaVacunacion> findByStatus(String status) {
@@ -90,7 +118,12 @@ public class CitaVacunacionServiceImpl implements ICitaVacunacionService {
         return this.repo.findByEstado(status);
     }
 
-
+    /**
+     * Elimina físicamente del repositorio una cita de vacunación mediante su ID.
+     *
+     * @param id El identificador único de la cita a remover.
+     * @throws ServiceException Si se presenta un error al intentar eliminar el registro.
+     */
     @Override
     @Transactional
     public void deleteById(Long id) {
