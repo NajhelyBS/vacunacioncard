@@ -1,18 +1,25 @@
 package pe.edu.utp.vacunacioncard.service.comun;
 
+
 import pe.edu.utp.vacunacioncard.model.comun.RegistroAuditoria;
 import java.util.List;
 import java.util.Optional;
 
+
 public interface IRegistroAuditoriaService {
 
-    RegistroAuditoria registrarAccion(RegistroAuditoria auditoria);
 
-    List<RegistroAuditoria> listarTodos();
+    RegistroAuditoria create(RegistroAuditoria auditoria);
 
-    Optional<RegistroAuditoria> obtenerPorId(Long id);
 
-    List<RegistroAuditoria> listarPorUsuario(Long usuarioId);
+    List<RegistroAuditoria> getAll();
 
-    List<RegistroAuditoria> listarPorEntidadAfectada(String entidad);
+
+    Optional<RegistroAuditoria> findById(Long id);
+
+
+    List<RegistroAuditoria> findByUser(Long usuarioId);
+
+
+    List<RegistroAuditoria> findByAffectedEntity(String entidad);
 }
