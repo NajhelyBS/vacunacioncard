@@ -34,6 +34,6 @@ jobs:
             -Dsonar.organization=najhelybs \
             -Dsonar.projectKey=NajhelyBS_vacunacioncard \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-            -Dsonar.coverage.exclusions="**/exception/**,**/model/**,**/service/vacunacion/**,**/service/cita/**,**/service/campania/**,**/service/salud/**,**/service/comun/**,**/service/usuario/impl/SeguroMedicoServiceImpl.java,**/service/usuario/impl/UsuarioServiceImpl.java,**/service/usuario/impl/EnfermeroServiceImpl.java,**/service/usuario/impl/AdministradorServiceImpl.java,**/service/auth/impl/CuentaUsuarioServiceImpl.java,**/service/auth/impl/PermisoServiceImpl.java,**/service/auth/impl/RolServiceImpl.java,**/VacunacioncardApplication.java"
+            -Dsonar.coverage.exclusions="**/model/**,**/dto/**,**/exception/**,**/config/**,**/VacunacioncardApplication.java"
 
             
