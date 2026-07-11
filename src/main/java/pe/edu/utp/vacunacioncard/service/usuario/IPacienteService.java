@@ -6,15 +6,29 @@ import java.util.Optional;
 
 public interface IPacienteService {
 
-    List<Paciente> listarTodos();
+    /** Obtiene todos los pacientes registrados. */
+    List<Paciente> getAll();
 
-    Optional<Paciente> obtenerPorId(Long id);
+    /** Busca un paciente por su identificador único. */
+    Optional<Paciente> getById(Long id);
 
-    Paciente registrar(Paciente paciente);
+    /** Registra un nuevo paciente en el sistema. */
+    Paciente create(Paciente paciente);
 
-    Optional<Paciente> obtenerPorDni(String dni);
+    /** Actualiza los datos de un paciente existente. */
+    Paciente update(Paciente paciente);
 
-    Optional<Paciente> obtenerPorHistoriaClinica(String historiaClinicaId);
+    /**
+     * Elimina físicamente un paciente del sistema.
+     */
+    void deleteById(Long id);
 
-    List<Paciente> listarPorEstado(boolean activo);
+    /** Busca un paciente por su DNI. */
+    Optional<Paciente> findByDni(String dni);
+
+    /** Busca un paciente por el ID de su historia clínica. */
+    Optional<Paciente> findByHistoriaClinicaId(String historiaClinicaId);
+
+    /** Lista los pacientes filtrados por su estado activo/inactivo. */
+    List<Paciente> findByStatus(boolean activo);
 }

@@ -6,11 +6,21 @@ import java.util.Optional;
 
 public interface IAdministradorService {
 
-    List<Administrador> listarTodos();
+    /** Obtiene todos los administradores registrados. */
+    List<Administrador> getAll();
 
-    Optional<Administrador> obtenerPorId(Long id);
+    /** Busca un administrador por su identificador único. */
+    Optional<Administrador> getById(Long id);
 
-    Administrador registrar(Administrador administrador);
+    /** Registra un nuevo administrador en el sistema. */
+    Administrador create(Administrador administrador);
 
-    List<Administrador> listarPorArea(String area);
+    /** Actualiza los datos de un administrador existente. */
+    Administrador update(Administrador administrador);
+
+    /** Elimina un administrador del sistema. */
+    void deleteById(Long id);
+
+    /** Lista los administradores asignados a un área institucional. */
+    List<Administrador> findByArea(String area);
 }

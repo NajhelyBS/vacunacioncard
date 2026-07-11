@@ -6,15 +6,24 @@ import java.util.Optional;
 
 public interface IVacunaService {
 
-    List<Vacuna> listarTodas();
+    /** Obtiene todas las vacunas del catálogo. */
+    List<Vacuna> getAll();
 
-    Optional<Vacuna> obtenerPorId(Long id);
+    /** Busca una vacuna por su identificador único. */
+    Optional<Vacuna> getById(Long id);
 
-    Vacuna registrar(Vacuna vacuna);
+    /** Registra una nueva vacuna en el catálogo. */
+    Vacuna create(Vacuna vacuna);
 
-    List<Vacuna> listarPorDisponibilidad(boolean disponible);
+    /** Actualiza los datos de una vacuna existente. */
+    Vacuna update(Vacuna vacuna);
 
-    List<Vacuna> listarPorLaboratorio(Long laboratorioId);
+    /** Elimina una vacuna del catálogo. */
+    void deleteById(Long id);
 
-    void eliminar(Long id);
+    /** Filtra las vacunas según su disponibilidad en stock. */
+    List<Vacuna> findByAvailability(boolean disponible);
+
+    /** Lista las vacunas producidas por un laboratorio específico. */
+    List<Vacuna> findByLaboratory(Long laboratorioId);
 }

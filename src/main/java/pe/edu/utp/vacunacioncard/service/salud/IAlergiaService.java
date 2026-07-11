@@ -6,13 +6,21 @@ import java.util.Optional;
 
 public interface IAlergiaService {
 
-    List<Alergia> listarTodas();
+    /** Obtiene todas las alergias catalogadas. */
+    List<Alergia> getAll();
 
-    Optional<Alergia> obtenerPorId(Long id);
+    /** Busca una alergia por su identificador único. */
+    Optional<Alergia> getById(Long id);
 
-    Alergia registrar(Alergia alergia);
+    /** Registra una nueva alergia. */
+    Alergia create(Alergia alergia);
 
-    List<Alergia> listarPorSeveridad(String severidad);
+    /** Actualiza los datos de una alergia existente. */
+    Alergia update(Alergia alergia);
 
-    void eliminar(Long id);
+    /** Elimina una alergia del sistema. */
+    void deleteById(Long id);
+
+    /** Lista las alergias según su nivel de severidad. */
+    List<Alergia> findBySeverity(String severidad);
 }

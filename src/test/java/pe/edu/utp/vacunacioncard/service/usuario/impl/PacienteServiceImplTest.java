@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.usuario.Paciente;
 import pe.edu.utp.vacunacioncard.repository.usuario.PacienteRepository;
 
@@ -34,92 +35,129 @@ class PacienteServiceImplTest {
     }
 
     @Test
-    @DisplayName("Listar todos retorna la lista de pacientes")
-    void listarTodos() {
+    @DisplayName("getAll retorna la lista de pacientes")
+    void getAll() {
         when(repo.findAll()).thenReturn(List.of(crearPaciente()));
 
-        List<Paciente> resultado = service.listarTodos();
+        List<Paciente> resultado = service.getAll();
 
         assertEquals(1, resultado.size());
     }
 
     @Test
-    @DisplayName("Obtener por ID retorna el paciente si existe")
-    void obtenerPorId_existe() {
+    @DisplayName("getById retorna el paciente si existe")
+    void getById_existe() {
         Paciente paciente = crearPaciente();
         when(repo.findById(1L)).thenReturn(Optional.of(paciente));
 
-        Optional<Paciente> resultado = service.obtenerPorId(1L);
+        Optional<Paciente> resultado = service.getById(1L);
 
         assertTrue(resultado.isPresent());
         assertEquals("12345678", resultado.get().getDni());
     }
 
     @Test
-    @DisplayName("Obtener por ID retorna vacío si no existe")
-    void obtenerPorId_noExiste() {
+    @DisplayName("getById retorna vacío si no existe")
+    void getById_noExiste() {
         when(repo.findById(99L)).thenReturn(Optional.empty());
 
-        assertTrue(service.obtenerPorId(99L).isEmpty());
+        assertTrue(service.getById(99L).isEmpty());
     }
 
     @Test
-    @DisplayName("Registrar guarda y retorna el paciente")
-    void registrar() {
+    @DisplayName("create guarda y retorna el paciente")
+    void create() {
         Paciente paciente = crearPaciente();
         when(repo.save(paciente)).thenReturn(paciente);
 
-        Paciente resultado = service.registrar(paciente);
+        Paciente resultado = service.create(paciente);
 
         assertEquals(1L, resultado.getId());
         verify(repo).save(paciente);
     }
 
     @Test
-    @DisplayName("Obtener por DNI retorna el paciente")
-    void obtenerPorDni() {
+    @DisplayName("create lanza ServiceException cuando falla la base de datos")
+    void create_lanzaServiceException() {
+        Paciente pacienteError = crearPaciente();
+
+        when(repo.save(pacienteError))
+                .thenThrow(new org.springframework.dao.DataRetrievalFailureException("Error simulado de DB"));
+
+        assertThrows(ServiceException.class, () -> service.create(pacienteError));
+    }
+
+    @Test
+    @DisplayName("update actualiza y retorna el paciente si existe")
+    void update_existe() {
+        Paciente paciente = crearPaciente();
+        when(repo.existsById(1L)).thenReturn(true);
+        when(repo.save(paciente)).thenReturn(paciente);
+
+        Paciente resultado = service.update(paciente);
+
+        assertEquals("12345678", resultado.getDni());
+        verify(repo).save(paciente);
+    }
+
+    @Test
+    @DisplayName("update lanza ServiceException si el paciente no existe")
+    void update_noExiste() {
+        Paciente paciente = crearPaciente();
+        when(repo.existsById(1L)).thenReturn(false);
+
+        assertThrows(ServiceException.class, () -> service.update(paciente));
+        verify(repo, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("deleteById elimina el paciente")
+    void deleteById() {
+        doNothing().when(repo).deleteById(1L);
+
+        service.deleteById(1L);
+
+        verify(repo, times(1)).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("deleteById lanza ServiceException si falla la base de datos")
+    void deleteById_lanzaServiceException() {
+        doThrow(new org.springframework.dao.DataRetrievalFailureException("Error simulado de DB"))
+                .when(repo).deleteById(1L);
+
+        assertThrows(ServiceException.class, () -> service.deleteById(1L));
+    }
+
+    @Test
+    @DisplayName("findByDni retorna el paciente")
+    void findByDni() {
         Paciente paciente = crearPaciente();
         when(repo.findByDni("12345678")).thenReturn(Optional.of(paciente));
 
-        Optional<Paciente> resultado = service.obtenerPorDni("12345678");
+        Optional<Paciente> resultado = service.findByDni("12345678");
 
         assertTrue(resultado.isPresent());
         assertEquals("Juan Pérez", resultado.get().getNombreCompleto());
     }
 
     @Test
-    @DisplayName("Obtener por historia clínica retorna el paciente")
-    void obtenerPorHistoriaClinica() {
+    @DisplayName("findByHistoriaClinicaId retorna el paciente")
+    void findByHistoriaClinicaId() {
         Paciente paciente = crearPaciente();
         paciente.setHistoriaClinicaId("HC-001");
         when(repo.findByHistoriaClinicaId("HC-001")).thenReturn(Optional.of(paciente));
 
-        assertTrue(service.obtenerPorHistoriaClinica("HC-001").isPresent());
+        assertTrue(service.findByHistoriaClinicaId("HC-001").isPresent());
     }
 
     @Test
-    @DisplayName("Listar por estado filtra correctamente")
-    void listarPorEstado() {
+    @DisplayName("findByStatus filtra correctamente")
+    void findByStatus() {
         when(repo.findByActivo(true)).thenReturn(List.of(crearPaciente()));
 
-        List<Paciente> resultado = service.listarPorEstado(true);
+        List<Paciente> resultado = service.findByStatus(true);
 
         assertEquals(1, resultado.size());
     }
-
-    @Test
-    @DisplayName("Registrar lanza ServiceException cuando falla la base de datos")
-    void registrarDeberiaLanzarServiceExceptionCuandoFallaBaseDatos() {
-        Paciente pacienteError = crearPaciente();
-
-        when(repo.save(pacienteError))
-            .thenThrow(new org.springframework.dao.DataRetrievalFailureException("Error simulado de DB"));
-
-        assertThrows(
-            pe.edu.utp.vacunacioncard.exception.ServiceException.class, 
-            () -> service.registrar(pacienteError)
-        );
-    }
-
-
 }

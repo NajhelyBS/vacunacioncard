@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface LaboratorioRepository extends JpaRepository<Laboratorio, Long> {
     List<Laboratorio> findByPaisOrigenIgnoreCase(String paisOrigen);
+
 }

@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.List;
 
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
-
     Optional<Paciente> findByDni(String dni);
     Optional<Paciente> findByHistoriaClinicaId(String historiaClinicaId);
     List<Paciente> findByActivo(boolean activo);

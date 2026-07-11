@@ -6,13 +6,21 @@ import java.util.Optional;
 
 public interface ICampaniaVacunacionService {
 
-    List<CampaniaVacunacion> listarTodas();
+    /** Obtiene todas las campañas de vacunación registradas. */
+    List<CampaniaVacunacion> getAll();
 
-    Optional<CampaniaVacunacion> obtenerPorId(Long id);
+    /** Busca una campaña por su identificador único. */
+    Optional<CampaniaVacunacion> getById(Long id);
 
-    CampaniaVacunacion registrar(CampaniaVacunacion campania);
+    /** Registra una nueva campaña de vacunación. */
+    CampaniaVacunacion create(CampaniaVacunacion campania);
 
-    List<CampaniaVacunacion> listarPorEstado(String estado);
+    /** Actualiza los datos de una campaña existente. */
+    CampaniaVacunacion update(CampaniaVacunacion campania);
 
-    void eliminar(Long id);
+    /** Elimina una campaña de vacunación del sistema. */
+    void deleteById(Long id);
+
+    /** Lista las campañas según su estado operativo. */
+    List<CampaniaVacunacion> findByStatus(String estado);
 }

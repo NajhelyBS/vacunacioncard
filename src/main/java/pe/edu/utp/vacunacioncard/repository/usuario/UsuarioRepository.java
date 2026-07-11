@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.List;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    
     Optional<Usuario> findByDni(String dni);
     List<Usuario> findByActivo(boolean activo);
 }

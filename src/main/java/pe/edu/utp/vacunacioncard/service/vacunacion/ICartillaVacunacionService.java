@@ -6,13 +6,27 @@ import java.util.Optional;
 
 public interface ICartillaVacunacionService {
 
-    List<CartillaVacunacion> listarTodas();
+    /** Obtiene todas las cartillas de vacunación registradas. */
+    List<CartillaVacunacion> getAll();
 
-    Optional<CartillaVacunacion> obtenerPorId(Long id);
+    /** Busca una cartilla por su identificador único. */
+    Optional<CartillaVacunacion> getById(Long id);
 
-    CartillaVacunacion guardar(CartillaVacunacion cartilla);
+    /** Registra una nueva cartilla de vacunación. */
+    CartillaVacunacion create(CartillaVacunacion cartilla);
 
-    Optional<CartillaVacunacion> obtenerPorPaciente(Long pacienteId);
+    /** Actualiza los datos de una cartilla existente. */
+    CartillaVacunacion update(CartillaVacunacion cartilla);
 
-    Optional<CartillaVacunacion> obtenerPorCodigoQR(String codigoQR);
+    /**
+     * Desactiva lógicamente una cartilla (usa el flag "activa"), en lugar de
+     * eliminarla físicamente, para preservar el historial médico del paciente.
+     */
+    void deactivate(Long id);
+
+    /** Busca la cartilla asociada a un paciente. */
+    Optional<CartillaVacunacion> findByPatient(Long pacienteId);
+
+    /** Busca una cartilla mediante su código QR. */
+    Optional<CartillaVacunacion> findByQrCode(String codigoQR);
 }

@@ -13,11 +13,6 @@ import pe.edu.utp.vacunacioncard.service.campania.ICampaniaVacunacionService;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Implementación del servicio para la gestión de campañas de vacunación.
- * Proporciona la lógica de negocio para la planificación, consulta por estados
- * y el ciclo de vida completo de la entidad CampaniaVacunacion.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,42 +20,26 @@ public class CampaniaVacunacionServiceImpl implements ICampaniaVacunacionService
 
     private final CampaniaVacunacionRepository repo;
 
-    /**
-     * Recupera un listado completo de todas las campañas de vacunación del sistema.
-     *
-     * @return {@link List} que contiene todas las entidades {@link CampaniaVacunacion}.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public List<CampaniaVacunacion> listarTodas() {
-        log.info("Extrayendo el catálogo completo de campañas médicas registradas");
-        return this.repo.findAll();
+    public List<CampaniaVacunacion> getAll() {
+        log.info("Listando todas las campañas de vacunación");
+        return repo.findAll();
     }
 
-    /**
-     * Busca una campaña de vacunación específica mediante su identificador único.
-     *
-     * @param id Identificador único de la campaña de vacunación.
-     * @return Un {@link Optional} con la {@link CampaniaVacunacion} si se encuentra,
-     *         o un contenedor vacío si no existe.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public Optional<CampaniaVacunacion> obtenerPorId(Long id) {
-        log.info("Localizando campaña de vacunación con identificador único: {}", id);
-        return this.repo.findById(id);
+    public Optional<CampaniaVacunacion> getById(Long id) {
+        log.info("Buscando campaña con ID: {}", id);
+        return repo.findById(id);
     }
 
-    /**
-     * Registra una nueva campaña de vacunación o actualiza los datos de una existente.
-     *
-     * @param campania Entidad {@link CampaniaVacunacion} con la información a persistir.
-     * @return La entidad {@link CampaniaVacunacion} almacenada con su ID asignado.
-     * @throws ServiceException Si ocurre un error de acceso o persistencia en la base de datos.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional
-    public CampaniaVacunacion registrar(CampaniaVacunacion campania) {
+    public CampaniaVacunacion create(CampaniaVacunacion campania) {
         log.info("Registrando campaña: {}", campania.getNombre());
         try {
             CampaniaVacunacion guardada = repo.save(campania);
@@ -71,34 +50,38 @@ public class CampaniaVacunacionServiceImpl implements ICampaniaVacunacionService
         }
     }
 
-    /**
-     * Filtra y obtiene las campañas de vacunación según su estado operativo actual.
-     *
-     * @param estado Estado de la campaña (ej. "ACTIVA", "FINALIZADA", "PROGRAMADA").
-     * @return {@link List} de entidades {@link CampaniaVacunacion} que coinciden con el estado enviado.
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public List<CampaniaVacunacion> listarPorEstado(String estado) {
-        log.info("Filtrando campañas por el criterio de estado operacional: {}", estado);
-        return this.repo.findByEstado(estado);
-    }
-
-    /**
-     * Elimina una campaña de vacunación del sistema mediante su ID.
-     *
-     * @param id Identificador único de la campaña que se desea eliminar.
-     * @throws ServiceException Si ocurre un fallo de integridad o conectividad al borrar el registro.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional
-    public void eliminar(Long id) {
-        log.info("Procediendo a remover la campaña médica con ID: {}", id);
+    public CampaniaVacunacion update(CampaniaVacunacion campania) {
+        log.info("Actualizando campaña ID: {}", campania.getId());
         try {
-            this.repo.deleteById(id);
-            log.info("Registro de campaña eliminado exitosamente para ID: {}", id);
+            if (!repo.existsById(campania.getId())) {
+                throw new ServiceException("No existe la campaña con ID: " + campania.getId(), null);
+            }
+            return repo.save(campania);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al actualizar campaña ID: " + campania.getId(), e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        log.info("Eliminando campaña con ID: {}", id);
+        try {
+            repo.deleteById(id);
         } catch (DataAccessException e) {
             throw new ServiceException("Error al eliminar campaña con ID: " + id, e);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Transactional(readOnly = true)
+    public List<CampaniaVacunacion> findByStatus(String estado) {
+        log.info("Listando campañas por estado: {}", estado);
+        return repo.findByEstado(estado);
     }
 }

@@ -5,7 +5,6 @@ import pe.edu.utp.vacunacioncard.model.usuario.SeguroMedico;
 import java.util.Optional;
 
 public interface SeguroMedicoRepository extends JpaRepository<SeguroMedico, Long> {
-
     Optional<SeguroMedico> findByNumeroPoliza(String numeroPoliza);
 }
 

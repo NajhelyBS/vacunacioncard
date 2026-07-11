@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CondicionMedicaRepository extends JpaRepository<CondicionMedica, Long> {
-
     Optional<CondicionMedica> findByCodigoCIE10IgnoreCase(String codigoCIE10);
     List<CondicionMedica> findByActiva(boolean activa);
 }

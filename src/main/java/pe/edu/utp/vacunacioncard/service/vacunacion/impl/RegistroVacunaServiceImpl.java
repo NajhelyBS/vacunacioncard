@@ -13,11 +13,6 @@ import pe.edu.utp.vacunacioncard.service.vacunacion.IRegistroVacunaService;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Implementación del servicio para el control de los Registros de Vacunas aplicadas.
- * Gestiona el almacenamiento de los datos de inoculación individual, vinculando la 
- * información logística de lotes, el número de dosis y el personal médico responsable.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,45 +20,27 @@ public class RegistroVacunaServiceImpl implements IRegistroVacunaService {
 
     private final RegistroVacunaRepository repo;
 
-    /**
-     * Recupera un listado global con todos los registros de inoculaciones guardados en el sistema.
-     *
-     * @return {@link List} que aloja la totalidad de las entidades {@link RegistroVacuna}.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public List<RegistroVacuna> listarTodos() {
+    public List<RegistroVacuna> getAll() {
         log.info("Listando todos los registros de vacunas");
         return repo.findAll();
     }
 
-    /**
-     * Busca la información detallada de una inoculación específica mediante su identificador único.
-     *
-     * @param id Identificador único del registro de vacuna.
-     * @return Un {@link Optional} con el {@link RegistroVacuna} si existe en el repositorio,
-     *         o un contenedor vacío si no hay coincidencias.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public Optional<RegistroVacuna> obtenerPorId(Long id) {
+    public Optional<RegistroVacuna> getById(Long id) {
         log.info("Buscando registro de vacuna por ID: {}", id);
         return repo.findById(id);
     }
 
-    /**
-     * Almacena o actualiza la cartilla física de inoculación con los detalles de la dosis aplicada.
-     *
-     * @param registro Entidad {@link RegistroVacuna} que contiene el lote, dosis y relaciones médicas.
-     * @return La entidad {@link RegistroVacuna} guardada con su identificador único autogenerado.
-     * @throws ServiceException Si ocurre una anomalía de persistencia o fallo al acceder al repositorio.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional
-    public RegistroVacuna guardar(RegistroVacuna registro) {
-        log.info("Guardando registro de dosis N° {} para vacuna ID: {}",
-                registro.getNumeroDosis(),
-                registro.getVacuna() != null ? registro.getVacuna().getId() : "N/A");
+    public RegistroVacuna create(RegistroVacuna registro) {
+        log.info("Guardando registro de dosis N° {}", registro.getNumeroDosis());
         try {
             RegistroVacuna guardado = repo.save(registro);
             log.info("Registro de vacuna guardado con ID: {}", guardado.getId());
@@ -73,28 +50,45 @@ public class RegistroVacunaServiceImpl implements IRegistroVacunaService {
         }
     }
 
-    /**
-     * Filtra los registros de inoculaciones según el código identificador de lote de fabricación.
-     *
-     * @param lote Código alfanumérico del lote de vacunas
-     * @return {@link List} de entidades {@link RegistroVacuna} vinculadas al lote consultado.
-     */
+    /** {@inheritDoc} */
+    @Override
+    @Transactional
+    public RegistroVacuna update(RegistroVacuna registro) {
+        log.info("Actualizando registro de vacuna ID: {}", registro.getId());
+        try {
+            if (!repo.existsById(registro.getId())) {
+                throw new ServiceException("No existe el registro de vacuna con ID: " + registro.getId(), null);
+            }
+            return repo.save(registro);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al actualizar registro de vacuna ID: " + registro.getId(), e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        log.info("Eliminando registro de vacuna con ID: {}", id);
+        try {
+            repo.deleteById(id);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al eliminar registro de vacuna con ID: " + id, e);
+        }
+    }
+
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public List<RegistroVacuna> listarPorLote(String lote) {
+    public List<RegistroVacuna> findByBatch(String lote) {
         log.info("Listando registros por lote: {}", lote);
         return repo.findByLoteIgnoreCase(lote);
     }
 
-    /**
-     * Obtiene el historial de vacunas aplicadas por un miembro específico del personal de enfermería
-     *
-     * @param enfermeroId Identificador único del enfermero aplicador.
-     * @return {@link List} de entidades {@link RegistroVacuna} inyectadas por el profesional.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public List<RegistroVacuna> listarPorEnfermero(Long enfermeroId) {
+    public List<RegistroVacuna> findByNurse(Long enfermeroId) {
         log.info("Listando registros del enfermero ID: {}", enfermeroId);
         return repo.findByEnfermeroAplicadorId(enfermeroId);
     }

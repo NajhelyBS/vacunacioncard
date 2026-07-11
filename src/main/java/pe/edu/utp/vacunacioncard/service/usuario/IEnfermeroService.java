@@ -6,13 +6,24 @@ import java.util.Optional;
 
 public interface IEnfermeroService {
 
-    List<Enfermero> listarTodos();
+    /** Obtiene todos los enfermeros registrados. */
+    List<Enfermero> getAll();
 
-    Optional<Enfermero> obtenerPorId(Long id);
+    /** Busca un enfermero por su identificador único. */
+    Optional<Enfermero> getById(Long id);
 
-    Enfermero registrar(Enfermero enfermero);
+    /** Registra un nuevo enfermero en el sistema. */
+    Enfermero create(Enfermero enfermero);
 
-    Optional<Enfermero> obtenerPorColegiatura(String colegiatura);
+    /** Actualiza los datos de un enfermero existente. */
+    Enfermero update(Enfermero enfermero);
 
-    List<Enfermero> listarPorCentroTrabajo(String centroTrabajo);
+    /** Elimina un enfermero del sistema. */
+    void deleteById(Long id);
+
+    /** Busca un enfermero por su número de colegiatura. */
+    Optional<Enfermero> findByColegiatura(String colegiatura);
+
+    /** Lista los enfermeros asignados a un centro de trabajo. */
+    List<Enfermero> findByCentroTrabajo(String centroTrabajo);
 }

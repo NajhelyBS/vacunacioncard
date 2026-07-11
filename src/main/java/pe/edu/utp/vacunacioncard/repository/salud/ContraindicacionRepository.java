@@ -5,7 +5,6 @@ import pe.edu.utp.vacunacioncard.model.salud.Contraindicacion;
 import java.util.List;
 
 public interface ContraindicacionRepository extends JpaRepository<Contraindicacion, Long> {
-
     List<Contraindicacion> findByVacunaAfectadaId(Long vacunaId);
 }
 

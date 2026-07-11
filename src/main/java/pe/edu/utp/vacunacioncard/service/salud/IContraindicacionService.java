@@ -6,13 +6,21 @@ import java.util.Optional;
 
 public interface IContraindicacionService {
 
-    List<Contraindicacion> listarTodas();
+    /** Obtiene todas las contraindicaciones registradas. */
+    List<Contraindicacion> getAll();
 
-    Optional<Contraindicacion> obtenerPorId(Long id);
+    /** Busca una contraindicación por su identificador único. */
+    Optional<Contraindicacion> getById(Long id);
 
-    Contraindicacion registrar(Contraindicacion contraindicacion);
+    /** Registra una nueva contraindicación. */
+    Contraindicacion create(Contraindicacion contraindicacion);
 
-    List<Contraindicacion> listarPorVacunaAfectada(Long vacunaId);
+    /** Actualiza los datos de una contraindicación existente. */
+    Contraindicacion update(Contraindicacion contraindicacion);
 
-    void eliminar(Long id);
+    /** Elimina una contraindicación del sistema. */
+    void deleteById(Long id);
+
+    /** Lista las contraindicaciones que afectan a una vacuna específica. */
+    List<Contraindicacion> findByAffectedVaccine(Long vacunaId);
 }

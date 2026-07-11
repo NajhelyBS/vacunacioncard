@@ -6,15 +6,24 @@ import java.util.Optional;
 
 public interface IEsquemaVacunacionService {
 
-    List<EsquemaVacunacion> listarTodos();
+    /** Obtiene todos los esquemas de vacunación registrados. */
+    List<EsquemaVacunacion> getAll();
 
-    Optional<EsquemaVacunacion> obtenerPorId(Long id);
+    /** Busca un esquema de vacunación por su identificador único. */
+    Optional<EsquemaVacunacion> getById(Long id);
 
-    EsquemaVacunacion guardar(EsquemaVacunacion esquema);
+    /** Registra un nuevo esquema de vacunación. */
+    EsquemaVacunacion create(EsquemaVacunacion esquema);
 
-    List<EsquemaVacunacion> listarPorPaciente(Long pacienteId);
+    /** Actualiza los datos de un esquema existente. */
+    EsquemaVacunacion update(EsquemaVacunacion esquema);
 
-    List<EsquemaVacunacion> listarPorEstado(String estado);
+    /** Elimina un esquema de vacunación del sistema. */
+    void deleteById(Long id);
 
-    void eliminar(Long id);
+    /** Lista los esquemas asignados a un paciente. */
+    List<EsquemaVacunacion> findByPatient(Long pacienteId);
+
+    /** Lista los esquemas según su estado clínico. */
+    List<EsquemaVacunacion> findByStatus(String estado);
 }

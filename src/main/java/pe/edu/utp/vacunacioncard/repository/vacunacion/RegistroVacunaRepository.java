@@ -5,9 +5,7 @@ import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
 import java.util.List;
 
 public interface RegistroVacunaRepository extends JpaRepository<RegistroVacuna, Long> {
-
     List<RegistroVacuna> findByLoteIgnoreCase(String lote);
-
     List<RegistroVacuna> findByEnfermeroAplicadorId(Long enfermeroId);
 }
 

@@ -6,13 +6,21 @@ import java.util.Optional;
 
 public interface ISeguroMedicoService {
 
-    List<SeguroMedico> listarTodos();
+    /** Obtiene todos los seguros médicos registrados. */
+    List<SeguroMedico> getAll();
 
-    Optional<SeguroMedico> obtenerPorId(Long id);
+    /** Busca un seguro médico por su identificador único. */
+    Optional<SeguroMedico> getById(Long id);
 
-    SeguroMedico registrar(SeguroMedico seguro);
+    /** Registra un nuevo seguro médico. */
+    SeguroMedico create(SeguroMedico seguro);
 
-    Optional<SeguroMedico> obtenerPorNumeroPoliza(String numeroPoliza);
+    /** Actualiza los datos de un seguro médico existente. */
+    SeguroMedico update(SeguroMedico seguro);
 
-    void eliminar(Long id);
+    /** Elimina un seguro médico del sistema. */
+    void deleteById(Long id);
+
+    /** Busca un seguro médico por su número de póliza. */
+    Optional<SeguroMedico> findByPolicyNumber(String numeroPoliza);
 }

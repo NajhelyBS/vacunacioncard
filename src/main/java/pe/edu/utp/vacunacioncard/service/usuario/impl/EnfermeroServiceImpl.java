@@ -13,11 +13,6 @@ import pe.edu.utp.vacunacioncard.service.usuario.IEnfermeroService;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Implementación del servicio para la gestión del personal de enfermería.
- * Administra la lógica de negocio operativa del personal asistencial encargado de
- * las inoculaciones, validando sus números de colegiatura y asignación de sedes.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,42 +20,26 @@ public class EnfermeroServiceImpl implements IEnfermeroService {
 
     private final EnfermeroRepository repo;
 
-    /**
-     * Recupera un listado completo de todos los enfermeros registrados en la base de datos.
-     *
-     * @return {@link List} que aloja a todas las entidades {@link Enfermero}.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public List<Enfermero> listarTodos() {
+    public List<Enfermero> getAll() {
         log.info("Listando todos los enfermeros");
         return repo.findAll();
     }
 
-    /**
-     * Busca el registro detallado de un enfermero mediante su identificador único del sistema.
-     *
-     * @param id Identificador único del enfermero.
-     * @return Un {@link Optional} que contiene al {@link Enfermero} si se encuentra,
-     *         o un contenedor vacío si no existen registros.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public Optional<Enfermero> obtenerPorId(Long id) {
+    public Optional<Enfermero> getById(Long id) {
         log.info("Buscando enfermero por ID: {}", id);
         return repo.findById(id);
     }
 
-    /**
-     * Registra un nuevo enfermero en el sistema o actualiza la ficha del personal asistente.
-     *
-     * @param enfermero Entidad {@link Enfermero} con la información médica y colegiatura a persistir.
-     * @return La entidad {@link Enfermero} guardada con su identificador único autogenerado.
-     * @throws ServiceException Si ocurre una anomalía de acceso a datos durante la persistencia.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional
-    public Enfermero registrar(Enfermero enfermero) {
+    public Enfermero create(Enfermero enfermero) {
         log.info("Registrando enfermero con colegiatura: {}", enfermero.getColegiatura());
         try {
             Enfermero guardado = repo.save(enfermero);
@@ -71,29 +50,45 @@ public class EnfermeroServiceImpl implements IEnfermeroService {
         }
     }
 
-    /**
-     * Busca a un enfermero específico utilizando su número único de colegiatura profesional.
-     *
-     * @param colegiatura Código único del Colegio de Enfermeros del Perú (CEP).
-     * @return Un {@link Optional} que envuelve al {@link Enfermero} si existe la coincidencia,
-     *         o un contenedor vacío si no está registrado.
-     */
+    /** {@inheritDoc} */
+    @Override
+    @Transactional
+    public Enfermero update(Enfermero enfermero) {
+        log.info("Actualizando enfermero ID: {}", enfermero.getId());
+        try {
+            if (!repo.existsById(enfermero.getId())) {
+                throw new ServiceException("No existe el enfermero con ID: " + enfermero.getId(), null);
+            }
+            return repo.save(enfermero);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al actualizar enfermero ID: " + enfermero.getId(), e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        log.info("Eliminando enfermero con ID: {}", id);
+        try {
+            repo.deleteById(id);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al eliminar enfermero con ID: " + id, e);
+        }
+    }
+
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public Optional<Enfermero> obtenerPorColegiatura(String colegiatura) {
+    public Optional<Enfermero> findByColegiatura(String colegiatura) {
         log.info("Buscando enfermero por colegiatura: {}", colegiatura);
         return repo.findByColegiatura(colegiatura);
     }
 
-    /**
-     * Filtra y obtiene al personal de enfermería asignado a una sede o centro de salud específico.
-     *
-     * @param centroTrabajo Nombre del establecimiento de salud o centro de vacunación.
-     * @return {@link List} de entidades {@link Enfermero} operativas en la sede enviada.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public List<Enfermero> listarPorCentroTrabajo(String centroTrabajo) {
+    public List<Enfermero> findByCentroTrabajo(String centroTrabajo) {
         log.info("Listando enfermeros por centro: {}", centroTrabajo);
         return repo.findByCentroTrabajoIgnoreCase(centroTrabajo);
     }

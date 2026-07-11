@@ -6,15 +6,24 @@ import java.util.Optional;
 
 public interface ICentroVacunacionService {
 
-    List<CentroVacunacion> listarTodos();
+    /** Obtiene todos los centros de vacunación registrados. */
+    List<CentroVacunacion> getAll();
 
-    Optional<CentroVacunacion> obtenerPorId(Long id);
+    /** Busca un centro de vacunación por su identificador único. */
+    Optional<CentroVacunacion> getById(Long id);
 
-    CentroVacunacion registrar(CentroVacunacion centro);
+    /** Registra un nuevo centro de vacunación. */
+    CentroVacunacion create(CentroVacunacion centro);
 
-    List<CentroVacunacion> listarPorEstado(boolean activo);
+    /** Actualiza los datos de un centro de vacunación existente. */
+    CentroVacunacion update(CentroVacunacion centro);
 
-    List<CentroVacunacion> buscarPorNombre(String nombre);
+    /** Elimina un centro de vacunación del sistema. */
+    void deleteById(Long id);
 
-    void eliminar(Long id);
+    /** Lista los centros según su estado operativo (activo/inactivo). */
+    List<CentroVacunacion> findByStatus(boolean activo);
+
+    /** Busca centros de vacunación cuyo nombre contenga el texto indicado. */
+    List<CentroVacunacion> searchByName(String nombre);
 }

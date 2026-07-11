@@ -13,11 +13,6 @@ import pe.edu.utp.vacunacioncard.service.vacunacion.ICartillaVacunacionService;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Implementación del servicio para la gestión de Cartillas de Vacunación.
- * Constituye el eje central del módulo médico, administrando el historial digitalizado 
- * de dosis de los ciudadanos y permitiendo su validación remota mediante identificadores QR.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,43 +20,27 @@ public class CartillaVacunacionServiceImpl implements ICartillaVacunacionService
 
     private final CartillaVacunacionRepository repo;
 
-    /**
-     * Recupera un listado global con todas las cartillas de vacunación registradas en el sistema.
-     *
-     * @return {@link List} que contiene la totalidad de las entidades {@link CartillaVacunacion}.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public List<CartillaVacunacion> listarTodas() {
+    public List<CartillaVacunacion> getAll() {
         log.info("Listando todas las cartillas de vacunación");
         return repo.findAll();
     }
 
-    /**
-     * Busca una cartilla de vacunación específica mediante su identificador interno único.
-     *
-     * @param id Identificador único de la cartilla en la base de datos.
-     * @return Un {@link Optional} que contiene la {@link CartillaVacunacion} si se encuentra,
-     *         o un contenedor vacío si no existe el registro.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public Optional<CartillaVacunacion> obtenerPorId(Long id) {
+    public Optional<CartillaVacunacion> getById(Long id) {
         log.info("Buscando cartilla por ID: {}", id);
         return repo.findById(id);
     }
 
-    /**
-     * Registra una nueva cartilla sanitaria o actualiza los metadatos de un historial médico existente.
-     *
-     * @param cartilla Entidad {@link CartillaVacunacion} que enlaza al paciente y sus registros de dosis.
-     * @return La entidad {@link CartillaVacunacion} guardada de forma persistente con su respectivo ID.
-     * @throws ServiceException Si ocurre una anomalía de acceso a datos o violación de restricciones de llave única.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional
-    public CartillaVacunacion guardar(CartillaVacunacion cartilla) {
-        log.info("Guardando cartilla del paciente ID: {}",
+    public CartillaVacunacion create(CartillaVacunacion cartilla) {
+        log.info("Creando cartilla del paciente ID: {}",
                 cartilla.getPaciente() != null ? cartilla.getPaciente().getId() : "N/A");
         try {
             CartillaVacunacion guardada = repo.save(cartilla);
@@ -72,29 +51,52 @@ public class CartillaVacunacionServiceImpl implements ICartillaVacunacionService
         }
     }
 
-    /**
-     * Localiza la cartilla de vacunación correspondiente a un paciente en específico.
-     *
-     * @param pacienteId Identificador único del paciente del cual se requiere el historial médico.
-     * @return Un {@link Optional} con la {@link CartillaVacunacion} vinculada al ciudadano, 
-     *         o vacío si aún no se le ha aperturado una cartilla.
-     */
+    /** {@inheritDoc} */
+    @Override
+    @Transactional
+    public CartillaVacunacion update(CartillaVacunacion cartilla) {
+        log.info("Actualizando cartilla ID: {}", cartilla.getId());
+        try {
+            if (!repo.existsById(cartilla.getId())) {
+                throw new ServiceException("No existe la cartilla con ID: " + cartilla.getId(), null);
+            }
+            return repo.save(cartilla);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al actualizar cartilla ID: " + cartilla.getId(), e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Transactional
+    public void deactivate(Long id) {
+        log.info("Desactivando cartilla con ID: {}", id);
+        try {
+            repo.findById(id).ifPresentOrElse(cartilla -> {
+                cartilla.setActiva(false);
+                cartilla.setEstado("INACTIVA");
+                repo.save(cartilla);
+                log.info("Cartilla ID: {} desactivada", id);
+            }, () -> {
+                throw new ServiceException("No existe la cartilla con ID: " + id, null);
+            });
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al desactivar cartilla con ID: " + id, e);
+        }
+    }
+
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public Optional<CartillaVacunacion> obtenerPorPaciente(Long pacienteId) {
+    public Optional<CartillaVacunacion> findByPatient(Long pacienteId) {
         log.info("Buscando cartilla del paciente ID: {}", pacienteId);
         return repo.findByPacienteId(pacienteId);
     }
 
-    /**
-     * Busca y valida un historial médico empleando la cadena de texto única codificada en su código QR.
-     *
-     * @param codigoQR Cadena única hash o alfanumérica que representa la firma del código QR de la cartilla.
-     * @return Un {@link Optional} con la {@link CartillaVacunacion} hallada, o vacío si el código no coincide.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public Optional<CartillaVacunacion> obtenerPorCodigoQR(String codigoQR) {
+    public Optional<CartillaVacunacion> findByQrCode(String codigoQR) {
         log.info("Buscando cartilla por código QR");
         return repo.findByCodigoQR(codigoQR);
     }

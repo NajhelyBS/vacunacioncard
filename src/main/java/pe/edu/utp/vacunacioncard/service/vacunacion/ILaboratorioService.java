@@ -6,13 +6,21 @@ import java.util.Optional;
 
 public interface ILaboratorioService {
 
-    List<Laboratorio> listarTodos();
+    /** Obtiene todos los laboratorios registrados. */
+    List<Laboratorio> getAll();
 
-    Optional<Laboratorio> obtenerPorId(Long id);
+    /** Busca un laboratorio por su identificador único. */
+    Optional<Laboratorio> getById(Long id);
 
-    Laboratorio registrar(Laboratorio laboratorio);
+    /** Registra un nuevo laboratorio. */
+    Laboratorio create(Laboratorio laboratorio);
 
-    List<Laboratorio> listarPorPais(String pais);
+    /** Actualiza los datos de un laboratorio existente. */
+    Laboratorio update(Laboratorio laboratorio);
 
-    void eliminar(Long id);
+    /** Elimina un laboratorio del sistema. */
+    void deleteById(Long id);
+
+    /** Lista los laboratorios según su país de origen. */
+    List<Laboratorio> findByCountry(String pais);
 }

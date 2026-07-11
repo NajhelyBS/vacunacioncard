@@ -13,11 +13,6 @@ import pe.edu.utp.vacunacioncard.service.usuario.ISeguroMedicoService;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Implementación del servicio para la gestión de los Seguros Médicos de los usuarios.
- * Controla la lógica de negocio para la afiliación de coberturas médicas,
- * validación de contratos comerciales y auditoría de pólizas activas en el sistema.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,42 +20,26 @@ public class SeguroMedicoServiceImpl implements ISeguroMedicoService {
 
     private final SeguroMedicoRepository repo;
 
-    /**
-     * Recupera un listado completo de todos los seguros médicos registrados en el sistema.
-     *
-     * @return {@link List} que aloja todas las entidades {@link SeguroMedico}.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public List<SeguroMedico> listarTodos() {
+    public List<SeguroMedico> getAll() {
         log.info("Listando todos los seguros médicos");
         return repo.findAll();
     }
 
-    /**
-     * Busca la información de una cobertura o seguro mediante su identificador interno único.
-     *
-     * @param id Identificador único del seguro médico en la base de datos.
-     * @return Un {@link Optional} que contiene el {@link SeguroMedico} si es hallado,
-     *         o un contenedor vacío si no se registran coincidencias.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public Optional<SeguroMedico> obtenerPorId(Long id) {
+    public Optional<SeguroMedico> getById(Long id) {
         log.info("Buscando seguro médico por ID: {}", id);
         return repo.findById(id);
     }
 
-    /**
-     * Registra una nueva entidad prestadora de salud o actualiza los datos de una póliza existente.
-     *
-     * @param seguro Entidad {@link SeguroMedico} que contiene la información contractual a persistir.
-     * @return La entidad {@link SeguroMedico} guardada con su identificador único asignado.
-     * @throws ServiceException Si ocurre una anomalía de persistencia o restricción de unicidad con la póliza.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional
-    public SeguroMedico registrar(SeguroMedico seguro) {
+    public SeguroMedico create(SeguroMedico seguro) {
         log.info("Registrando seguro médico póliza: {}", seguro.getNumeroPoliza());
         try {
             SeguroMedico guardado = repo.save(seguro);
@@ -71,34 +50,38 @@ public class SeguroMedicoServiceImpl implements ISeguroMedicoService {
         }
     }
 
-    /**
-     * Localiza un seguro de salud específico empleando su número único de póliza o contrato.
-     *
-     * @param numeroPoliza Cadena de texto única que identifica el contrato del seguro (ej. SIS, EsSalud o EPS privada).
-     * @return Un {@link Optional} con el {@link SeguroMedico} hallado, o vacío si el número de póliza no existe.
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<SeguroMedico> obtenerPorNumeroPoliza(String numeroPoliza) {
-        log.info("Buscando seguro por póliza: {}", numeroPoliza);
-        return repo.findByNumeroPoliza(numeroPoliza);
-    }
-
-    /**
-     * Remueve de manera permanente un registro de seguro médico del catálogo del sistema.
-     *
-     * @param id Identificador único del seguro médico que se desea eliminar.
-     * @throws ServiceException Si se presenta un fallo de conectividad o restricción de llave foránea al borrar.
-     */
+    /** {@inheritDoc} */
     @Override
     @Transactional
-    public void eliminar(Long id) {
+    public SeguroMedico update(SeguroMedico seguro) {
+        log.info("Actualizando seguro médico ID: {}", seguro.getId());
+        try {
+            if (!repo.existsById(seguro.getId())) {
+                throw new ServiceException("No existe el seguro médico con ID: " + seguro.getId(), null);
+            }
+            return repo.save(seguro);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error al actualizar seguro médico ID: " + seguro.getId(), e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
         log.info("Eliminando seguro médico con ID: {}", id);
         try {
             repo.deleteById(id);
-            log.info("Seguro médico eliminado con ID: {}", id);
         } catch (DataAccessException e) {
             throw new ServiceException("Error al eliminar seguro médico con ID: " + id, e);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<SeguroMedico> findByPolicyNumber(String numeroPoliza) {
+        log.info("Buscando seguro por póliza: {}", numeroPoliza);
+        return repo.findByNumeroPoliza(numeroPoliza);
     }
 }

@@ -6,9 +6,22 @@ import java.util.Optional;
 
 public interface IUsuarioService {
 
-    List<Usuario> listarActivos();
+    /**
+     * Obtiene todos los usuarios activos del sistema, sin distinguir su rol.
+     * @return lista de usuarios activos.
+     */
+    List<Usuario> getActiveUsers();
 
-    Optional<Usuario> buscarPorDni(String dni);
+    /**
+     * Busca un usuario por su Documento Nacional de Identidad.
+     * @param dni DNI del usuario.
+     * @return el usuario si existe.
+     */
+    Optional<Usuario> findByDni(String dni);
 
-    void cambiarEstado(Long id);
+    /**
+     * Alterna el estado activo/inactivo de un usuario (baja lógica).
+     * @param id identificador del usuario.
+     */
+    void toggleStatus(Long id);
 }

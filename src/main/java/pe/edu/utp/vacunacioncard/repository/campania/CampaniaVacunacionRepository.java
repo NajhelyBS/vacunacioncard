@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CampaniaVacunacionRepository extends JpaRepository<CampaniaVacunacion, Long> {
     List<CampaniaVacunacion> findByEstado(String estado);
+
 }

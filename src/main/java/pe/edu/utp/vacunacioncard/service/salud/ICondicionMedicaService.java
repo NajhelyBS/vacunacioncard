@@ -6,15 +6,24 @@ import java.util.Optional;
 
 public interface ICondicionMedicaService {
 
-    List<CondicionMedica> listarTodas();
+    /** Obtiene todas las condiciones médicas registradas. */
+    List<CondicionMedica> getAll();
 
-    Optional<CondicionMedica> obtenerPorId(Long id);
+    /** Busca una condición médica por su identificador único. */
+    Optional<CondicionMedica> getById(Long id);
 
-    CondicionMedica registrar(CondicionMedica condicion);
+    /** Registra una nueva condición médica. */
+    CondicionMedica create(CondicionMedica condicion);
 
-    Optional<CondicionMedica> obtenerPorCodigoCIE10(String codigoCIE10);
+    /** Actualiza los datos de una condición médica existente. */
+    CondicionMedica update(CondicionMedica condicion);
 
-    List<CondicionMedica> listarPorEstado(boolean activa);
+    /** Elimina una condición médica del sistema. */
+    void deleteById(Long id);
 
-    void eliminar(Long id);
+    /** Busca una condición médica por su código CIE-10. */
+    Optional<CondicionMedica> findByIcd10Code(String codigoCIE10);
+
+    /** Lista las condiciones médicas según su estado activo/inactivo. */
+    List<CondicionMedica> findByStatus(boolean activa);
 }
