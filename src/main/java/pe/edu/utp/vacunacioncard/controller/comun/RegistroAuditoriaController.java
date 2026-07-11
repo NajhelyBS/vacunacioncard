@@ -17,6 +17,7 @@ import pe.edu.utp.vacunacioncard.service.comun.IRegistroAuditoriaService;
 
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 
@@ -83,7 +84,7 @@ public class RegistroAuditoriaController {
         }
 
 
-        auditoria.setFechaHora(LocalDateTime.now());
+        auditoria.setFechaHora(LocalDateTime.now(ZoneId.of("America/Lima")));
         auditoria.setIpAddress(httpRequest.getRemoteAddr());
 
 
