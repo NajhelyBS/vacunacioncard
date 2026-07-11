@@ -4,7 +4,6 @@ import pe.edu.utp.vacunacioncard.model.salud.Alergia;
 
 /**
  * Datos de entrada para registrar o actualizar una alergia.
- * Expone únicamente los campos que el cliente puede definir (no incluye el id ni estados internos).
  */
 public record AlergiaRequest(
         String nombre,
@@ -13,13 +12,17 @@ public record AlergiaRequest(
         String sintomas,
         String tratamientoRecomendado) {
 
+    public Alergia toEntity() {
+        return toEntity(null);
+    }
     /**
      * Construye una entidad {@link Alergia} a partir de los datos recibidos.
      *
      * @return la entidad lista para persistir.
      */
-    public Alergia toEntity() {
+    public Alergia toEntity(Long id) {
         Alergia alergia = new Alergia();
+        alergia.setId(id);
         alergia.setNombre(nombre);
         alergia.setTipo(tipo);
         alergia.setSeveridad(severidad);

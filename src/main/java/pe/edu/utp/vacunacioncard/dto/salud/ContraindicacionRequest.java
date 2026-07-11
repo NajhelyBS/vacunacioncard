@@ -19,7 +19,19 @@ public record ContraindicacionRequest(
      * @return la entidad lista para persistir.
      */
     public Contraindicacion toEntity() {
+        return toEntity(null);
+    }
+
+    /**
+     * Construye una entidad {@link Contraindicacion} asignándole un identificador único.
+     * Útil para operaciones de actualización (PUT).
+     *
+     * @param id el identificador único de la contraindicación.
+     * @return la entidad configurada con su ID correspondiente.
+     */
+    public Contraindicacion toEntity(Long id) {
         Contraindicacion contraindicacion = new Contraindicacion();
+        contraindicacion.setId(id);
         contraindicacion.setDescripcion(descripcion);
         contraindicacion.setSeveridad(severidad);
         contraindicacion.setCondicionAsociada(condicionAsociada);

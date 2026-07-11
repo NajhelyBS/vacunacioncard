@@ -19,7 +19,19 @@ public record CondicionMedicaRequest(
      * @return la entidad lista para persistir.
      */
     public CondicionMedica toEntity() {
+        return toEntity(null);
+    }
+
+    /**
+     * Construye una entidad {@link CondicionMedica} asignándole un identificador único.
+     * Útil para operaciones de actualización (PUT).
+     *
+     * @param id el identificador único de la condición médica.
+     * @return la entidad configurada con su ID correspondiente.
+     */
+    public CondicionMedica toEntity(Long id) {
         CondicionMedica condicion = new CondicionMedica();
+        condicion.setId(id);
         condicion.setNombre(nombre);
         condicion.setCodigoCIE10(codigoCIE10);
         condicion.setDescripcion(descripcion);

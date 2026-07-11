@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/condiciones-medicas")
-@Tag(name = "Condiciones Médicas", description = "Catálogo de condiciones médicas (CIE-10)")
+@Tag(name = "Conditions Médicas", description = "Catálogo de condiciones médicas (CIE-10)")
 @RequiredArgsConstructor
 public class CondicionMedicaController {
 
@@ -48,5 +48,15 @@ public class CondicionMedicaController {
     public ResponseEntity<CondicionMedicaResponse> create(@RequestBody CondicionMedicaRequest request) {
         CondicionMedica creada = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(CondicionMedicaResponse.from(creada));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualiza una condición médica existente", operationId = "updateCondicionMedica")
+    public ResponseEntity<CondicionMedicaResponse> update(@PathVariable Long id, @RequestBody CondicionMedicaRequest request) {
+        if (service.getById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        CondicionMedica actualizada = service.update(request.toEntity(id));
+        return ResponseEntity.ok(CondicionMedicaResponse.from(actualizada));
     }
 }

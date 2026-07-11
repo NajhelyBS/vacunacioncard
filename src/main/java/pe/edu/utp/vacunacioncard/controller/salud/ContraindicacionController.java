@@ -27,6 +27,14 @@ public class ContraindicacionController {
         return ResponseEntity.ok(service.getAll().stream().map(ContraindicacionResponse::from).toList());
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Obtiene una contraindicación por ID", operationId = "getContraindicacionById")
+    public ResponseEntity<ContraindicacionResponse> getById(@PathVariable Long id) {
+        return service.getById(id)
+                .map(c -> ResponseEntity.ok(ContraindicacionResponse.from(c)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/vacuna/{vacunaId}")
     @Operation(summary = "Lista contraindicaciones de una vacuna específica", operationId = "getContraindicacionesByVacuna")
     public ResponseEntity<List<ContraindicacionResponse>> getByVacuna(@PathVariable Long vacunaId) {
@@ -38,5 +46,15 @@ public class ContraindicacionController {
     public ResponseEntity<ContraindicacionResponse> create(@RequestBody ContraindicacionRequest request) {
         Contraindicacion creada = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(ContraindicacionResponse.from(creada));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualiza una contraindicación existente", operationId = "updateContraindicacion")
+    public ResponseEntity<ContraindicacionResponse> update(@PathVariable Long id, @RequestBody ContraindicacionRequest request) {
+        if (service.getById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Contraindicacion actualizada = service.update(request.toEntity(id));
+        return ResponseEntity.ok(ContraindicacionResponse.from(actualizada));
     }
 }

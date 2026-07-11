@@ -47,4 +47,16 @@ public class AlergiaController {
         Alergia creada = service.create(request.toEntity());
         return ResponseEntity.status(HttpStatus.CREATED).body(AlergiaResponse.from(creada));
     }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualiza una alergia existente", operationId = "updateAlergia")
+    public ResponseEntity<AlergiaResponse> update(@PathVariable Long id, @RequestBody AlergiaRequest request) {
+        if (service.getById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Alergia actualizada = service.update(request.toEntity(id));
+        return ResponseEntity.ok(AlergiaResponse.from(actualizada));
+    }
+
+
 }
