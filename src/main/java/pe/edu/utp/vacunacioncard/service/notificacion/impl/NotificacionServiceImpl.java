@@ -11,9 +11,9 @@ import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
 import pe.edu.utp.vacunacioncard.repository.notificacion.NotificacionRepository;
 import pe.edu.utp.vacunacioncard.service.notificacion.INotificacionService;
-import pe.edu.utp.vacunacioncard.service.patron.creacional.factorymethod.INotificacionFactory;
-import pe.edu.utp.vacunacioncard.service.patron.creacional.factorymethod.RecordatorioNotificacionFactory;
-import pe.edu.utp.vacunacioncard.service.patron.creacional.factorymethod.SistemaNotificacionFactory;
+import pe.edu.utp.vacunacioncard.service.patron.factorymethod.INotificacionFactory;
+import pe.edu.utp.vacunacioncard.service.patron.factorymethod.RecordatorioNotificacionFactory;
+import pe.edu.utp.vacunacioncard.service.patron.factorymethod.SistemaNotificacionFactory;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

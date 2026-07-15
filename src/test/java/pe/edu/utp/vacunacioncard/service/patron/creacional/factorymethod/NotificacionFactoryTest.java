@@ -8,6 +8,9 @@ import pe.edu.utp.vacunacioncard.model.notificacion.NotificacionSistema;
 import pe.edu.utp.vacunacioncard.model.usuario.Enfermero;
 import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
+import pe.edu.utp.vacunacioncard.service.patron.factorymethod.INotificacionFactory;
+import pe.edu.utp.vacunacioncard.service.patron.factorymethod.RecordatorioNotificacionFactory;
+import pe.edu.utp.vacunacioncard.service.patron.factorymethod.SistemaNotificacionFactory;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

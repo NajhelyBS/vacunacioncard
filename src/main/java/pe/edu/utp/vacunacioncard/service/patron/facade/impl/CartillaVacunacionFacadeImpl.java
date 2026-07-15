@@ -1,4 +1,4 @@
-package pe.edu.utp.vacunacioncard.service.patron.estructural.facade.impl;
+package pe.edu.utp.vacunacioncard.service.patron.facade.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.vacunacion.CartillaVacunacion;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
-import pe.edu.utp.vacunacioncard.service.patron.estructural.facade.CartillaVacunacionFacade;
+import pe.edu.utp.vacunacioncard.service.patron.facade.CartillaVacunacionFacade;
 import pe.edu.utp.vacunacioncard.service.vacunacion.ICartillaVacunacionService;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IEsquemaVacunacionService;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IRegistroVacunaService;

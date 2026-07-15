@@ -1,4 +1,4 @@
-package pe.edu.utp.vacunacioncard.service.patron.creacional.factorymethod;
+package pe.edu.utp.vacunacioncard.service.patron.factorymethod;
 
 import java.time.LocalDateTime;
 import pe.edu.utp.vacunacioncard.model.notificacion.Notificacion;

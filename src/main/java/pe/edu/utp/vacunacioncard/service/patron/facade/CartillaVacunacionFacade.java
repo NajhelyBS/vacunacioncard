@@ -1,4 +1,4 @@
-package pe.edu.utp.vacunacioncard.service.patron.estructural.facade;
+package pe.edu.utp.vacunacioncard.service.patron.facade;
 
 import pe.edu.utp.vacunacioncard.model.vacunacion.CartillaVacunacion;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;

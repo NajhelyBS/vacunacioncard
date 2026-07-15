@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pe.edu.utp.vacunacioncard.exception.ServiceException;
 import pe.edu.utp.vacunacioncard.model.vacunacion.CartillaVacunacion;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
-import pe.edu.utp.vacunacioncard.service.patron.estructural.facade.impl.CartillaVacunacionFacadeImpl;
+import pe.edu.utp.vacunacioncard.service.patron.facade.impl.CartillaVacunacionFacadeImpl;
 import pe.edu.utp.vacunacioncard.service.vacunacion.ICartillaVacunacionService;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IEsquemaVacunacionService;
 import pe.edu.utp.vacunacioncard.service.vacunacion.IRegistroVacunaService;
