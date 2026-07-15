@@ -8,6 +8,7 @@ import pe.edu.utp.vacunacioncard.service.patron.observer.impl.CartillaObserver;
 import pe.edu.utp.vacunacioncard.service.patron.observer.impl.RecordatorioObserver;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,11 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Observer - NotificadorVacunacion")
 class ObserverVacunacionTest {
 
+    /** Fecha fija para garantizar pruebas deterministas. */
+    private static final LocalDateTime PROXIMA_DOSIS_FIJA = LocalDateTime.of(2026, Month.SEPTEMBER, 1, 10, 0);
+
     private RegistroVacuna registroDemo() {
         RegistroVacuna registro = new RegistroVacuna();
         registro.setNumeroDosis(1);
         registro.setLote("LOTE-ABC-123");
-        registro.setProximaDosis(LocalDateTime.now().plusDays(30));
+        registro.setProximaDosis(PROXIMA_DOSIS_FIJA);
         return registro;
     }
 

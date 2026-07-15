@@ -8,7 +8,6 @@ import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,13 +15,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class NotificacionRecordatorioTest {
 
     private final Usuario usuario = new Enfermero();
-    private static final String ZONE_LIMA = "America/Lima";
+
+    /** Fecha fija para garantizar pruebas deterministas. */
+    private static final LocalDateTime FECHA_FIJA = LocalDateTime.of(2026, Month.JULY, 15, 10, 0);
 
     @Test
     @DisplayName("Constructor asigna campos correctamente")
     void constructorAsignaCampos() {
         RegistroVacuna registro = new RegistroVacuna();
-        LocalDateTime fecha = LocalDateTime.of(2026, Month.JULY, 15, 10, 0);
+        LocalDateTime fecha = FECHA_FIJA;
 
         NotificacionRecordatorio notif = new NotificacionRecordatorio(usuario, registro, fecha);
 
@@ -35,9 +36,8 @@ class NotificacionRecordatorioTest {
     @Test
     @DisplayName("Lanza excepción si registro es nulo")
     void registroNulo() {
-        LocalDateTime fecha = LocalDateTime.now(ZoneId.of(ZONE_LIMA));
         assertThrows(IllegalArgumentException.class,
-                () -> new NotificacionRecordatorio(usuario, null, fecha));
+                () -> new NotificacionRecordatorio(usuario, null, FECHA_FIJA));
     }
 
     @Test
