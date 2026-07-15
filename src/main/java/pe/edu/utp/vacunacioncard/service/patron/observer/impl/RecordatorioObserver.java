@@ -14,6 +14,12 @@ import pe.edu.utp.vacunacioncard.service.patron.observer.ObservadorVacunacion;
 @Component
 public class RecordatorioObserver implements ObservadorVacunacion {
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Reacciona al evento {@code PROXIMA_DOSIS} generando el aviso de la siguiente dosis
+     * programada para el paciente.
+     */
     @Override
     public void alAplicarDosis(String tipoEvento, RegistroVacuna registro) {
         log.info("Evento: {} - Generando recordatorio de próxima dosis para el {}",

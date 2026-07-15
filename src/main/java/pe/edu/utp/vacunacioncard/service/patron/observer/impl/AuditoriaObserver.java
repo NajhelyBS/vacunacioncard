@@ -12,6 +12,12 @@ import pe.edu.utp.vacunacioncard.service.patron.observer.ObservadorVacunacion;
 @Component
 public class AuditoriaObserver implements ObservadorVacunacion {
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Reacciona al evento {@code DOSIS_APLICADA} dejando traza de auditoría de la
+     * aplicación de la dosis.
+     */
     @Override
     public void alAplicarDosis(String tipoEvento, RegistroVacuna registro) {
         log.info("Evento: {} - Registrando en auditoría la aplicación de la dosis (lote {})",

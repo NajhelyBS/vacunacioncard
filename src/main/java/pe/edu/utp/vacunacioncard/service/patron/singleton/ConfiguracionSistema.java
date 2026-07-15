@@ -33,22 +33,48 @@ public class ConfiguracionSistema implements Serializable {
         return Holder.INSTANCIA;
     }
 
+    /**
+     * Preserva la unicidad de la instancia frente a la deserialización.
+     * Sin este método, deserializar la clase crearía un segundo objeto y rompería el Singleton.
+     *
+     * @return La instancia única de {@link ConfiguracionSistema}.
+     */
     protected Object readResolve() {
         return getInstancia();
     }
 
+    /**
+     * Define el nombre con el que se identifica el sistema.
+     *
+     * @param nombreSistema Nombre a mostrar del sistema.
+     */
     public void setNombreSistema(String nombreSistema) {
         this.nombreSistema = nombreSistema;
     }
 
+    /**
+     * Define cuántos intentos de inicio de sesión fallidos se toleran antes de bloquear la cuenta.
+     *
+     * @param maxIntentosLogin Número máximo de intentos fallidos permitidos.
+     */
     public void setMaxIntentosLogin(int maxIntentosLogin) {
         this.maxIntentosLogin = maxIntentosLogin;
     }
 
+    /**
+     * Define durante cuántos días permanece vigente una cita.
+     *
+     * @param diasValidezCita Días de validez de una cita.
+     */
     public void setDiasValidezCita(int diasValidezCita) {
         this.diasValidezCita = diasValidezCita;
     }
 
+    /**
+     * Activa o desactiva globalmente el envío de notificaciones.
+     *
+     * @param notificacionesActivas {@code true} para habilitar las notificaciones.
+     */
     public void setNotificacionesActivas(boolean notificacionesActivas) {
         this.notificacionesActivas = notificacionesActivas;
     }
