@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Observer - NotificadorVacunacion")
 class ObserverVacunacionTest {
 
-    /** Fecha fija para garantizar pruebas deterministas. */
     private static final LocalDateTime PROXIMA_DOSIS_FIJA = LocalDateTime.of(2026, Month.SEPTEMBER, 1, 10, 0);
 
     private RegistroVacuna registroDemo() {
@@ -63,5 +62,14 @@ class ObserverVacunacionTest {
     void eventoSinSuscriptores() {
         NotificadorVacunacion notificador = new NotificadorVacunacion();
         assertDoesNotThrow(() -> notificador.notificar("INEXISTENTE", registroDemo()));
+    }
+
+    @Test
+    @DisplayName("getNotificador retorna la instancia interna del notificador subyacente")
+    void testGetNotificador() {
+        NotificadorVacunacionConcreto concreto = concreto();
+        NotificadorVacunacion interno = concreto.getNotificador();
+
+        assertNotNull(interno);
     }
 }
