@@ -221,6 +221,21 @@ class CuentaUsuarioServiceImplTest {
         doThrow(new DataRetrievalFailureException("Error relacional")).when(repo).deleteById(1L);
         assertThrows(ServiceException.class, () -> service.deleteById(1L));
     }
+
+    @Test
+    @DisplayName("getById recupera la cuenta de forma idónea si existe")
+    void getById_cobertura() {
+        CuentaUsuario cuenta = cuentaValida();
+        when(repo.findById(1L)).thenReturn(Optional.of(cuenta));
+        Optional<CuentaUsuario> resultado = service.getById(1L);
+        assertTrue(resultado.isPresent());
+        assertEquals("jperez", resultado.get().getUsername());
+        verify(repo, times(1)).findById(1L);
+    }
+
+
+
+
 }
 
 
