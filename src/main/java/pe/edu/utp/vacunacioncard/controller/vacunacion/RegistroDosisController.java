@@ -10,7 +10,7 @@ import pe.edu.utp.vacunacioncard.dto.vacunacion.CartillaVacunacionResponse;
 import pe.edu.utp.vacunacioncard.dto.vacunacion.RegistrarDosisRequest;
 import pe.edu.utp.vacunacioncard.dto.vacunacion.RegistroVacunaResponse;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
-import pe.edu.utp.vacunacioncard.service.patron.estructural.facade.CartillaVacunacionFacade;
+import pe.edu.utp.vacunacioncard.service.patron.facade.CartillaVacunacionFacade;
 
 @RestController
 @RequestMapping("/api/registro-dosis")
