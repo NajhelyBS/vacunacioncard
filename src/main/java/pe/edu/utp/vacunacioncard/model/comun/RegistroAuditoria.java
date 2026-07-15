@@ -1,5 +1,6 @@
 package pe.edu.utp.vacunacioncard.model.comun;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -21,6 +22,7 @@ import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
 @Setter
 public class RegistroAuditoria implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -46,6 +48,4 @@ public class RegistroAuditoria implements Serializable {
     @Column(name = "fecha_hora")
     private LocalDateTime fechaHora;
 
-    @Column(name = "ip_address")
-    private String ipAddress;
 }
