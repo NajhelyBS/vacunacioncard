@@ -20,9 +20,12 @@ public abstract class NotificacionCreator {
      * Genera una notificación para un destinatario específico con un mensaje dado.
      * @param destinatario
      * @param mensaje
-     * @return
      */
     public final Notificacion generarNotificacion(Usuario destinatario, String mensaje) {
+        if (destinatario == null) {
+            throw new IllegalArgumentException("No se puede generar una notificación sin un destinatario válido.");
+        }
+
         Notificacion notificacion = crearNotificacion(destinatario, mensaje);
         notificacion.setFechaEnvio(LocalDateTime.now(ZoneId.of(ZONE_LIMA)));
         notificacion.setEstado(estadoInicial());

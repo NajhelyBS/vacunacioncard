@@ -16,7 +16,6 @@ import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
 import pe.edu.utp.vacunacioncard.repository.notificacion.NotificacionRepository;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ class NotificacionServiceImplTest {
     @InjectMocks
     private NotificacionServiceImpl service;
 
-    private static final String ZONE_LIMA = "America/Lima";
+  private static final LocalDateTime FECHA_TEST_FIJA = LocalDateTime.of(2026, 8, 1, 10, 0);
 
     private Usuario crearUsuario() {
         Enfermero enfermero = new Enfermero();
@@ -120,10 +119,9 @@ class NotificacionServiceImplTest {
         Usuario usuario = crearUsuario();
         RegistroVacuna registro = new RegistroVacuna();
 
-        LocalDateTime fecha = LocalDateTime.now(ZoneId.of(ZONE_LIMA)).plusDays(30);
         when(repo.save(any(Notificacion.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        service.registerVaccineReminder(usuario, registro, fecha);
+        service.registerVaccineReminder(usuario, registro, FECHA_TEST_FIJA);
 
         verify(repo, times(1)).save(any(Notificacion.class));
     }
@@ -152,9 +150,9 @@ class NotificacionServiceImplTest {
     void registerVaccineReminder_lanzaServiceException() {
         Usuario usuario = crearUsuario();
         RegistroVacuna registro = new RegistroVacuna();
-        LocalDateTime fecha = LocalDateTime.now(ZoneId.of(ZONE_LIMA));
+
         when(repo.save(any(Notificacion.class))).thenThrow(new DataRetrievalFailureException("Error BD"));
 
-        assertThrows(ServiceException.class, () -> service.registerVaccineReminder(usuario, registro, fecha));
+        assertThrows(ServiceException.class, () -> service.registerVaccineReminder(usuario, registro, FECHA_TEST_FIJA));
     }
 }
