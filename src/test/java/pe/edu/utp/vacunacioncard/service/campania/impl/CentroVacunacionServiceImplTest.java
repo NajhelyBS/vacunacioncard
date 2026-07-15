@@ -27,9 +27,6 @@ class CentroVacunacionServiceImplTest {
     @InjectMocks
     private CentroVacunacionServiceImpl service;
 
-    /**
-     * Helper metodológico para aislar la instanciación del modelo de pruebas y evitar duplicidad.
-     */
     private CentroVacunacion crearCentro() {
         CentroVacunacion centro = new CentroVacunacion();
         centro.setId(1L);
