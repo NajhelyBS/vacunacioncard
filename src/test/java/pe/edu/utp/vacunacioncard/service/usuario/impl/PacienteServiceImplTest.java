@@ -160,4 +160,17 @@ class PacienteServiceImplTest {
 
         assertEquals(1, resultado.size());
     }
+
+    @Test
+    @DisplayName("update captura anomalías de datos relacionales y lanza una ServiceException (Cubre bloque catch)")
+    void update_fallaPersistencia() {
+        Paciente paciente = crearPaciente();
+        when(repo.existsById(1L)).thenReturn(true);
+        when(repo.save(paciente))
+                .thenThrow(new org.springframework.dao.DataRetrievalFailureException("Error persistencia de DB"));
+
+        assertThrows(ServiceException.class, () -> service.update(paciente));
+        verify(repo, times(1)).save(paciente);
+    }
+
 }
