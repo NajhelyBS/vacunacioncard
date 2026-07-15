@@ -1,2 +1,3 @@
--- Datos iniciales del sistema de vacunación
-SELECT 1;
+/*DATOS*/
+-- Pendiente: agregar inserts de datos iniciales cuando estén definidos
+select 1;

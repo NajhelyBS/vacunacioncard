@@ -1,9 +1,7 @@
 package pe.edu.utp.vacunacioncard.dto.comun;
 
-
 import pe.edu.utp.vacunacioncard.model.comun.RegistroAuditoria;
 import java.time.LocalDateTime;
-
 
 public record RegistroAuditoriaResponse(
         Long id,
@@ -13,9 +11,7 @@ public record RegistroAuditoriaResponse(
         String entidadAfectada,
         String idEntidad,
         String detalles,
-        LocalDateTime fechaHora,
-        String ipAddress) {
-
+        LocalDateTime fechaHora) {
 
     public static RegistroAuditoriaResponse from(RegistroAuditoria r) {
         return new RegistroAuditoriaResponse(
@@ -26,8 +22,6 @@ public record RegistroAuditoriaResponse(
                 r.getEntidadAfectada(),
                 r.getIdEntidad(),
                 r.getDetalles(),
-                r.getFechaHora(),
-                r.getIpAddress());
+                r.getFechaHora());
     }
 }
-
