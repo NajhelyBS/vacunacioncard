@@ -1,4 +1,4 @@
-package pe.edu.utp.vacunacioncard.service.patron.estructural.facade;
+package pe.edu.utp.vacunacioncard.service.patron.facade;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

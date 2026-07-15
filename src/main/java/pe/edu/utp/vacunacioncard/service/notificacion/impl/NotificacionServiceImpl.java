@@ -11,9 +11,9 @@ import pe.edu.utp.vacunacioncard.model.usuario.Usuario;
 import pe.edu.utp.vacunacioncard.model.vacunacion.RegistroVacuna;
 import pe.edu.utp.vacunacioncard.repository.notificacion.NotificacionRepository;
 import pe.edu.utp.vacunacioncard.service.notificacion.INotificacionService;
-import pe.edu.utp.vacunacioncard.service.patron.factorymethod.INotificacionFactory;
-import pe.edu.utp.vacunacioncard.service.patron.factorymethod.RecordatorioNotificacionFactory;
-import pe.edu.utp.vacunacioncard.service.patron.factorymethod.SistemaNotificacionFactory;
+import pe.edu.utp.vacunacioncard.service.patron.factorymethod.NotificacionCreator;
+import pe.edu.utp.vacunacioncard.service.patron.factorymethod.RecordatorioNotificacionCreator;
+import pe.edu.utp.vacunacioncard.service.patron.factorymethod.SistemaNotificacionCreator;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,9 +34,6 @@ public class NotificacionServiceImpl implements INotificacionService {
 
     /** Estado asignado a una notificación despachada. */
     private static final String ESTADO_ENVIADA = "ENVIADA";
-
-    /** Estado asignado a una notificación pendiente de despacho. */
-    private static final String ESTADO_PENDIENTE = "PENDIENTE";
 
     /** Estado asignado a una notificación ya consultada por el destinatario. */
     private static final String ESTADO_LEIDA = "LEIDA";
@@ -112,17 +109,16 @@ public class NotificacionServiceImpl implements INotificacionService {
                             "No existe una notificación con ID: " + notificacionId, null));
             notificacion.setEstado(ESTADO_LEIDA);
             Notificacion actualizada = repo.save(notificacion);
-            log.info("Notificación ID: {} marcada como leída", notificacionId);
+            log.info("Notificación ID: {} actualizada a LEIDA", notificacionId);
             return actualizada;
         } catch (DataAccessException e) {
-            throw new ServiceException("Error al marcar la notificación como leída ID: " + notificacionId, e);
+            throw new ServiceException("Error al actualizar el estado de la notificación", e);
         }
     }
 
     /**
      * Construye y persiste una nueva alerta informativa dirigida a un usuario específico.
      * Este método hace uso del patrón de diseño <b>Factory Method</b> instanciando la clase
-     * {@link SistemaNotificacionFactory} para delegar la creación específica del objeto Alerta.
      *
      * @param usuario Entidad {@link Usuario} que recibirá el mensaje de alerta.
      * @param mensaje Contenido textual de la advertencia o evento del sistema.
@@ -131,17 +127,12 @@ public class NotificacionServiceImpl implements INotificacionService {
     @Override
     @Transactional
     public void registerAlert(Usuario usuario, String mensaje) {
-        log.info("Creando alerta para usuario ID: {}", usuario.getId());
-
-        // EMPLEACIÓN DEL PATRÓN: Instanciamos la fábrica concreta para tipos de Sistema/Alerta
-        INotificacionFactory factory = new SistemaNotificacionFactory("ALERTA");
-        Notificacion nuevaAlerta = factory.createNotification(usuario, mensaje);
-
+        log.info("Registrando alerta de sistema para usuario ID: {}", usuario.getId());
         try {
-            nuevaAlerta.setFechaEnvio(LocalDateTime.now(ZoneId.of(ZONE_LIMA)));
-            nuevaAlerta.setEstado(ESTADO_ENVIADA);
+            NotificacionCreator creador = new SistemaNotificacionCreator("ALERTA");
+            Notificacion nuevaAlerta = creador.generarNotificacion(usuario, mensaje);
             repo.save(nuevaAlerta);
-            log.info("Alerta registrada para usuario ID: {}", usuario.getId());
+            log.info("Alerta registrada exitosamente.");
         } catch (DataAccessException e) {
             throw new ServiceException("Error al registrar alerta", e);
         }
@@ -150,7 +141,7 @@ public class NotificacionServiceImpl implements INotificacionService {
     /**
      * Registra un recordatorio cronológico para la aplicación de una dosis o vacuna pendiente.
      * Este método implementa el patrón de diseño <b>Factory Method</b> a través de la clase
-     * {@link RecordatorioNotificacionFactory}, encapsulando las dependencias del registro médico
+     * {@link RecordatorioNotificacionCreator}, encapsulando las dependencias del registro médico
      * y la fecha programada. El registro se guarda inicialmente con el estado "PENDIENTE".
      *
      * @param usuario  Entidad {@link Usuario} que debe acudir a la vacunación.
@@ -162,18 +153,17 @@ public class NotificacionServiceImpl implements INotificacionService {
     @Transactional
     public void registerVaccineReminder(Usuario usuario, RegistroVacuna registro, LocalDateTime fecha) {
         log.info("Creando recordatorio de vacuna para usuario ID: {}", usuario.getId());
-
-        // EMPLEACIÓN DEL PATRÓN: Instanciamos la fábrica de Recordatorios inyectando sus dependencias requeridas
-        INotificacionFactory factory = new RecordatorioNotificacionFactory(registro, fecha);
-        Notificacion recordatorio = factory.createNotification(usuario, null);
-
         try {
-            recordatorio.setFechaEnvio(LocalDateTime.now(ZoneId.of(ZONE_LIMA)));
-            recordatorio.setEstado(ESTADO_PENDIENTE);
+            // 1. EMPLEACIÓN DEL PATRÓN: Instanciamos el Creator de Recordatorios con sus dependencias requeridas
+            NotificacionCreator creator = new RecordatorioNotificacionCreator(registro, fecha);
+            // 2. Invocamos el método del patrón para generar el producto abstracto Notificacion
+            Notificacion recordatorio = creator.generarNotificacion(usuario, null);
+            // 3. Persistimos el registro médico en el repositorio
             repo.save(recordatorio);
-            log.info("Recordatorio registrado para usuario ID: {}", usuario.getId());
+            log.info("Recordatorio médico registrado de forma idónea para usuario ID: {}", usuario.getId());
         } catch (DataAccessException e) {
             throw new ServiceException("Error al registrar recordatorio de vacuna", e);
         }
     }
+
 }
