@@ -152,7 +152,19 @@ class AlergiaServiceImplTest {
 
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
-        assertEquals("Penicilina", resultado.get(0).getNombre());
+        assertEquals("Penicilina", resultado.getFirst().getNombre());
         verify(repo, times(1)).findBySeveridadIgnoreCase("ALTA");
     }
+
+    @Test
+    @DisplayName("update captura anomalías de datos y propaga una ServiceException controlada (Cubre el bloque catch)")
+    void update_fallaPersistencia() {
+        Alergia alergia = crearAlergia();
+        when(repo.existsById(1L)).thenReturn(true);
+        when(repo.save(alergia)).thenThrow(new DataRetrievalFailureException("Error de escritura"));
+
+        assertThrows(ServiceException.class, () -> service.update(alergia));
+        verify(repo, times(1)).save(alergia);
+    }
+
 }
