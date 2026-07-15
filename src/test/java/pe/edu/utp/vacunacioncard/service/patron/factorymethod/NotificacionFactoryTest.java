@@ -2,6 +2,7 @@ package pe.edu.utp.vacunacioncard.service.patron.factorymethod;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import java.time.Month;
 import pe.edu.utp.vacunacioncard.model.notificacion.Notificacion;
 import pe.edu.utp.vacunacioncard.model.notificacion.NotificacionRecordatorio;
 import pe.edu.utp.vacunacioncard.model.notificacion.NotificacionSistema;
@@ -19,7 +20,7 @@ class NotificacionFactoryTest {
 
     private final Usuario usuario = new Enfermero();
 
-    private static final LocalDateTime FECHA_TEST_FIJA = LocalDateTime.of(2026, 8, 1, 10, 0);
+    private static final LocalDateTime FECHA_TEST_FIJA = LocalDateTime.of(2026, Month.AUGUST, 1, 10, 0);
 
     @Test
     @DisplayName("Crea notificación de tipo SISTEMA")

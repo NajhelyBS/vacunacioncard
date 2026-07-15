@@ -21,6 +21,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import java.time.Month;
+
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Service - NotificacionServiceImpl")
@@ -32,8 +34,7 @@ class NotificacionServiceImplTest {
     @InjectMocks
     private NotificacionServiceImpl service;
 
-  private static final LocalDateTime FECHA_TEST_FIJA = LocalDateTime.of(2026, 8, 1, 10, 0);
-
+    private static final LocalDateTime FECHA_TEST_FIJA = LocalDateTime.of(2026, Month.AUGUST, 1, 10, 0);
     private Usuario crearUsuario() {
         Enfermero enfermero = new Enfermero();
         enfermero.setId(1L);

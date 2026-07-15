@@ -3,7 +3,7 @@ package pe.edu.utp.vacunacioncard.service.patron.singleton;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
+import java.time.Month;
 import java.io.*;
 import java.time.LocalDate;
 
@@ -13,6 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ConfiguracionSistemaTest {
 
     private ConfiguracionSistema config;
+
+    private static final LocalDate FECHA_TEST_FIJA = LocalDate.of(2026, Month.AUGUST, 1);
 
     @BeforeEach
     void setUp() {
@@ -41,8 +43,8 @@ class ConfiguracionSistemaTest {
     void settersModifican() {
         config.setMaxIntentosLogin(5);
         config.setNombreSistema("NuevoNombre");
-        config.setDiasValidezCita(45);           
-        config.setNotificacionesActivas(false);   
+        config.setDiasValidezCita(45);
+        config.setNotificacionesActivas(false);
 
         assertEquals(5, config.getMaxIntentosLogin());
         assertEquals("NuevoNombre", config.getNombreSistema());
@@ -70,16 +72,16 @@ class ConfiguracionSistemaTest {
     @Test
     @DisplayName("Cita vigente dentro del rango de días")
     void citaVigente() {
-        LocalDate hoy = LocalDate.now(config.getZonaHoraria());
+        LocalDate fechaSimulada = FECHA_TEST_FIJA;
 
-        // Caso 1: Una cita programada para hoy es vigente
-        assertTrue(config.isCitaVigente(hoy));
+        // Caso 1: Una cita programada para la fecha de evaluación es vigente
+        assertTrue(config.isCitaVigente(fechaSimulada));
 
         // Caso 2: Una cita de hace exactamente 30 días todavía es vigente (Límite)
-        assertTrue(config.isCitaVigente(hoy.minusDays(30)));
+        assertTrue(config.isCitaVigente(fechaSimulada.minusDays(30)));
 
         // Caso 3: Una cita de hace 31 días ya caducó (Fuera de límite)
-        assertFalse(config.isCitaVigente(hoy.minusDays(31)));
+        assertFalse(config.isCitaVigente(fechaSimulada.minusDays(31)));
 
         // Caso 4: Una cita nula no es vigente
         assertFalse(config.isCitaVigente(null));
@@ -88,7 +90,7 @@ class ConfiguracionSistemaTest {
     @Test
     @DisplayName("readResolve mantiene la misma instancia tras la deserialización")
     void readResolveMantieneInstancia() throws Exception {
-       
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(config);
@@ -100,6 +102,6 @@ class ConfiguracionSistemaTest {
         ois.close();
 
         assertNotNull(deserializado);
-        assertSame(config, deserializado); 
+        assertSame(config, deserializado);
     }
 }
