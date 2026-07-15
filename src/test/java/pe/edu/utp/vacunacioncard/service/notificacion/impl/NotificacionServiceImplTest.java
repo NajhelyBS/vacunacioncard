@@ -156,4 +156,18 @@ class NotificacionServiceImplTest {
 
         assertThrows(ServiceException.class, () -> service.registerVaccineReminder(usuario, registro, FECHA_TEST_FIJA));
     }
+
+    @Test
+    @DisplayName("Marcar como leída lanza ServiceException si la base de datos falla al actualizar el estado")
+    void markAsRead_fallaPersistencia() {
+        Usuario usuario = crearUsuario();
+        NotificacionSistema notif = new NotificacionSistema(usuario, "Test", "SISTEMA");
+
+        when(repo.findById(5L)).thenReturn(Optional.of(notif));
+        when(repo.save(any(Notificacion.class))).thenThrow(new DataRetrievalFailureException("Error persistencia de BD"));
+
+        assertThrows(ServiceException.class, () -> service.markAsRead(5L));
+        verify(repo, times(1)).save(any(Notificacion.class));
+    }
+
 }
