@@ -166,4 +166,19 @@ class HorarioServiceImplTest {
         assertEquals(DiaSemana.LUNES, resultado.getFirst().getDiaSemana());
         verify(repo, times(1)).findByDiaSemana(DiaSemana.LUNES);
     }
+
+    @Test
+    @DisplayName("update lanza ServiceException de manera inmediata si el ID del horario es nulo (Elimina el amarillo del OR)")
+    void update_idNulo() {
+        Horario horarioConIdNulo = new Horario();
+        horarioConIdNulo.setId(null);
+        horarioConIdNulo.setDiaSemana(DiaSemana.LUNES);
+
+        assertThrows(ServiceException.class, () -> service.update(horarioConIdNulo));
+
+        verify(repo, never()).existsById(anyLong());
+        verify(repo, never()).save(any(Horario.class));
+    }
+
+
 }
