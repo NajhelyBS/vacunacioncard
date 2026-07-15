@@ -183,4 +183,35 @@ class CitaVacunacionServiceImplTest {
         assertEquals("PROGRAMADA", resultado.getFirst().getEstado());
         verify(repo, times(1)).findByEstado("PROGRAMADA");
     }
+
+    @Test
+    @DisplayName("create maneja de forma idónea el flujo cuando la entidad Paciente es nula (Elimina amarillo del ternario)")
+    void create_pacienteNulo() {
+        CitaVacunacion citaSinPaciente = new CitaVacunacion();
+        citaSinPaciente.setId(2L);
+        citaSinPaciente.setPaciente(null);
+        citaSinPaciente.setEstado("PENDIENTE");
+
+        when(repo.save(any(CitaVacunacion.class))).thenReturn(citaSinPaciente);
+
+        CitaVacunacion resultado = service.create(citaSinPaciente);
+
+        assertNotNull(resultado);
+        assertNull(resultado.getPaciente());
+        verify(repo, times(1)).save(citaSinPaciente);
+    }
+
+    @Test
+    @DisplayName("update lanza ServiceException de forma inmediata si el ID de la cita es nulo (Elimina amarillo del OR)")
+    void update_idNulo() {
+        CitaVacunacion citaConIdNulo = new CitaVacunacion();
+        citaConIdNulo.setId(null);
+        citaConIdNulo.setEstado("PROGRAMADA");
+
+        assertThrows(ServiceException.class, () -> service.update(citaConIdNulo));
+
+        verify(repo, never()).existsById(anyLong());
+        verify(repo, never()).save(any(CitaVacunacion.class));
+    }
+
 }
