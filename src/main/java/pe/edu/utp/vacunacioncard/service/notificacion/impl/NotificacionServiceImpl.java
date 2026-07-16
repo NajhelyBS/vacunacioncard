@@ -119,6 +119,10 @@ public class NotificacionServiceImpl implements INotificacionService {
     /**
      * Construye y persiste una nueva alerta informativa dirigida a un usuario específico.
      * Este método hace uso del patrón de diseño <b>Factory Method</b> instanciando la clase
+     * {@link SistemaNotificacionCreator}, que es quien decide el subtipo concreto a construir.
+     * El servicio solo solicita la notificación al Creator, por lo que permanece desacoplado
+     * de {@link pe.edu.utp.vacunacioncard.model.notificacion.NotificacionSistema}. La alerta
+     * se persiste con el estado "ENVIADA", ya que se despacha de inmediato.
      *
      * @param usuario Entidad {@link Usuario} que recibirá el mensaje de alerta.
      * @param mensaje Contenido textual de la advertencia o evento del sistema.
